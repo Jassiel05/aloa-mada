@@ -20,6 +20,9 @@ export default async function Header() {
           {viewer && (
             <Link href="/messages" className="whitespace-nowrap py-2 text-muted hover:text-laterite">Messages</Link>
           )}
+          {viewer && (
+            <Link href="/favoris" className="whitespace-nowrap py-2 text-muted hover:text-laterite">Favoris</Link>
+          )}
           {isRecruiter && (
             <Link href="/mes-offres" className="whitespace-nowrap py-2 text-muted hover:text-laterite">Mes offres</Link>
           )}
