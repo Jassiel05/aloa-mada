@@ -5,7 +5,11 @@ import { getViewer } from "@/lib/viewer";
 import { CITIES, CONTRACTS, contractLabel, formatRate, workModeLabel } from "@/lib/labels";
 import type { Offer } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Offres" };
+export const metadata: Metadata = {
+  title: "Offres d'emploi et missions à Madagascar",
+  description: "CDI, CDD, freelance, stages et extras publiés par les recruteurs sur Aloa-Mada.",
+  alternates: { canonical: "/offres" },
+};
 
 export default async function OffresPage({ searchParams }: { searchParams: Promise<{ q?: string; ville?: string; contrat?: string }> }) {
   const sp = await searchParams;

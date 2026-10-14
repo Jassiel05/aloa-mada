@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/viewer";
@@ -7,6 +8,8 @@ import type { Contacts, ProfileWithDetails } from "@/lib/types";
 import Gallery from "@/components/Gallery";
 
 type Search = { q?: string; ville?: string; contrat?: string; dispo?: string; vue?: string; p?: string; n?: string };
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const PAGE = 48;
 const MAX = 480;
