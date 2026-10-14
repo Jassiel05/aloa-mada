@@ -6,7 +6,10 @@ import { toCard } from "@/lib/cards";
 import type { Contacts, ProfileWithDetails } from "@/lib/types";
 import Gallery from "@/components/Gallery";
 
-type Search = { q?: string; ville?: string; contrat?: string; dispo?: string; vue?: string; p?: string };
+type Search = { q?: string; ville?: string; contrat?: string; dispo?: string; vue?: string; p?: string; n?: string };
+
+const PAGE = 48;
+const MAX = 480;
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<Search> }) {
   const sp = await searchParams;
@@ -14,6 +17,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const q = (sp.q ?? "").replace(/[%,()*]/g, " ").trim();
   const viewer = await getViewer();
   const supabase = await createClient();
+  const limit = Math.min(MAX, Math.max(PAGE, Number(sp.n) || PAGE));
 
   const details = recruiters ? "recruiter_details(*)" : "candidate_details!inner(*)";
   let query = supabase
@@ -22,7 +26,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     .eq("status", "approved")
     .eq("role", recruiters ? "recruiter" : "candidate")
     .order("updated_at", { ascending: false })
-    .limit(60);
+    .limit(limit + 1);
 
   if (sp.ville) query = query.eq("city", sp.ville);
   if (!recruiters) {
@@ -34,7 +38,26 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   }
 
   const { data, error } = await query;
-  const rows = (data ?? []) as unknown as ProfileWithDetails[];
+  const fetched = (data ?? []) as unknown as ProfileWithDetails[];
+  const hasMore = fetched.length > limit;
+  const rows = fetched.slice(0, limit);
+
+  // Lien direct vers une fiche (?p=…) : on l'ajoute même si elle n'est pas dans la page chargée
+  if (sp.p && !rows.some((r) => r.id === sp.p)) {
+    const { data: one } = await supabase
+      .from("profiles")
+      .select("*, candidate_details(*), recruiter_details(*)")
+      .eq("id", sp.p)
+      .eq("status", "approved")
+      .maybeSingle();
+    if (one) rows.unshift(one as unknown as ProfileWithDetails);
+  }
+
+  let favorites: string[] = [];
+  if (viewer) {
+    const { data: favs } = await supabase.from("favorites").select("profile_id").eq("user_id", viewer.id).not("profile_id", "is", null);
+    favorites = (favs ?? []).map((f: { profile_id: string }) => f.profile_id);
+  }
 
   let contacts = new Map<string, Contacts>();
   if (viewer?.can.seeContacts && rows.length) {
@@ -115,8 +138,22 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <Gallery
             cards={cards}
             initialId={sp.p ?? null}
-            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation } : null}
+            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, favorites } : null}
           />
+        )}
+        {hasMore && (
+          <div className="mt-10 text-center">
+            <Link href={filterHref({ n: String(limit + PAGE) })} scroll={false} className="btn-outline min-h-12 px-8">Voir plus de profils</Link>
+          </div>
+        )}
+        {viewer && (viewer.profile.role === "recruiter" || viewer.isAdmin) && !recruiters && (q || sp.ville || sp.contrat) && (
+          <p className="mt-8 text-center text-sm text-muted">
+            Personne ne correspond encore ?{" "}
+            <Link href={`/alertes?${new URLSearchParams({ cible: "talents", ...(q ? { metier: q } : {}), ...(sp.ville ? { ville: sp.ville } : {}), ...(sp.contrat ? { contrat: sp.contrat } : {}) }).toString()}`} className="font-bold">
+              Créez une alerte avec ces critères
+            </Link>{" "}
+            et recevez un email dès qu&apos;un profil arrive.
+          </p>
         )}
       </div>
     </main>
