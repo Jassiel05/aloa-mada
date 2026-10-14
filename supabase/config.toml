@@ -1,0 +1,42 @@
+# Configuration Supabase d'Aloa-Mada.
+# Utilisée par l'intégration GitHub de Supabase (migrations + stockage déployés à chaque push sur main)
+# et par la CLI en local. Référence : https://supabase.com/docs/guides/local-development/cli/config
+project_id = "aloa-mada"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+# Pas de données de démonstration : la base de production ne reçoit que les migrations.
+enabled = false
+
+[storage]
+enabled = true
+file_size_limit = "5MiB"
+
+# Bucket des photos portrait (déployé automatiquement par l'intégration GitHub)
+[storage.buckets.avatars]
+public = true
+file_size_limit = "3MiB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+
+[auth]
+enabled = true
+# Réglages pour le développement local. En production, les URL se règlent dans
+# Supabase > Authentication > URL Configuration (voir README).
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback", "https://*.vercel.app/auth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true

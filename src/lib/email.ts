@@ -1,6 +1,8 @@
 /** Envoi d'emails via l'API Resend (https://resend.com). Sans clé, rien n'est envoyé et le site continue de fonctionner. */
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+import { siteUrl } from "./site";
+
+export const SITE_URL = siteUrl();
 
 export function escapeHtml(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);

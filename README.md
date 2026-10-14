@@ -28,37 +28,48 @@ Plateforme de mise en relation directe entre recruteurs et candidats à Madagasc
 
 Tout passe par la fonction SQL `can(action)` et les règles RLS de `supabase/migrations/0001_schema.sql`. Un Pro expiré redevient Simple automatiquement, une nouvelle photo repasse en modération, et un membre ne peut ni changer son plan ni se valider lui-même.
 
-## Installation
+## Installation (tout est automatique depuis GitHub)
 
-### 1. Supabase
+Le dépôt contient tout ce qu'il faut : le code du site (`src/`), la base de données (`supabase/migrations/`) et la configuration Supabase (`supabase/config.toml`). Chaque push sur `main` met à jour la base **et** le site.
 
-1. Créez un projet sur [supabase.com](https://supabase.com). Choisissez une région proche, par exemple Europe (Francfort ou Paris), et notez le mot de passe de la base.
-2. Ouvrez **SQL Editor → New query**, collez tout le fichier `supabase/migrations/0001_schema.sql`, puis cliquez sur **Run**. Cela crée les tables, les droits, le stockage des photos et le temps réel.
-3. Dans **Authentication → URL Configuration** :
-   - Site URL : l'adresse du site (`http://localhost:3000` en local, puis l'URL Vercel ou votre domaine) ;
-   - Redirect URLs : ajoutez `http://localhost:3000/auth/callback` et `https://VOTRE-DOMAINE/auth/callback`.
-4. Dans **Authentication → Sign In / Providers → Email**, laissez « Confirm email » activé (recommandé contre les faux comptes).
-5. Récupérez dans **Project Settings → API** (ou **Data API**) l'URL du projet et la clé `anon` (ou la « publishable key »).
-6. Pour devenir admin : inscrivez-vous sur le site avec votre email, puis lancez dans le SQL Editor :
+### 1. Relier Supabase au dépôt
 
-   ```sql
-   update public.profiles set role = 'admin', status = 'approved', onboarded = true
-   where id = (select id from auth.users where email = 'VOTRE-EMAIL');
-   ```
+1. Créez un projet sur [supabase.com](https://supabase.com) (région Europe, par exemple).
+2. **Project Settings → Integrations → GitHub** : connectez le dépôt `Jassiel05/aloa-mada`.
+   - *Supabase directory* : `.` (le dossier `supabase/` est à la racine) ;
+   - *Production branch* : `main` ;
+   - activez **Deploy to production**.
+3. À chaque push sur `main`, Supabase applique les nouvelles migrations (`0001` → `0002` → `0003`) et crée le stockage des photos.
 
-### 2. En local
+> Ne collez pas le SQL à la main dans le SQL Editor si l'intégration est active : les tables existeraient déjà et la migration échouerait.
+
+### 2. Relier Vercel (variables d'environnement automatiques)
+
+1. Sur [vercel.com/new](https://vercel.com/new), importez `Jassiel05/aloa-mada` (framework détecté : Next.js). Vercel redéploie à chaque push sur `main`.
+2. Dans Supabase : **Project Settings → Integrations → Vercel** → connectez ce projet Vercel. Supabase y ajoute tout seul `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` et `SUPABASE_SERVICE_ROLE_KEY`.
+3. L'adresse du site est détectée automatiquement sur Vercel. `NEXT_PUBLIC_SITE_URL` ne sert que si vous branchez votre propre nom de domaine.
+4. Emails : ajoutez `RESEND_API_KEY` et `EMAIL_FROM` dans **Vercel → Settings → Environment Variables** (ou installez l'intégration Resend depuis le Marketplace Vercel), puis redéployez.
+
+### 3. Réglages Supabase à faire une seule fois
+
+L'intégration GitHub ne pousse pas les réglages d'authentification. Dans **Authentication → URL Configuration** :
+- *Site URL* : l'adresse Vercel du site (ex. `https://aloa-mada.vercel.app`) ;
+- *Redirect URLs* : `https://aloa-mada.vercel.app/auth/callback`, `https://*.vercel.app/auth/callback` et `http://localhost:3000/auth/callback`.
+
+Pour devenir admin : inscrivez-vous sur le site, puis lancez dans le SQL Editor :
+
+```sql
+update public.profiles set role = 'admin', status = 'approved', onboarded = true
+where id = (select id from auth.users where email = 'VOTRE-EMAIL');
+```
+
+### En local (facultatif)
 
 ```bash
-cp .env.example .env.local   # puis remplissez les 3 valeurs
+cp .env.example .env.local   # puis remplissez les valeurs
 npm install
 npm run dev
 ```
-
-### 3. Mise en ligne sur Vercel
-
-1. Importez le dépôt GitHub sur [vercel.com/new](https://vercel.com/new).
-2. Ajoutez les variables `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` et `NEXT_PUBLIC_SITE_URL` (l'URL finale du site).
-3. Déployez, puis reportez l'URL dans Supabase (étape 1.3).
 
 ### 4. À compléter avant d'ouvrir au public
 
@@ -80,13 +91,7 @@ npm run dev
 
 ### Mise en place
 
-1. Dans Supabase **SQL Editor**, exécutez `supabase/migrations/0002_phase2.sql` (après le 0001).
-2. Créez un compte sur [resend.com](https://resend.com), vérifiez votre domaine (**Domains → Add domain**, puis ajoutez les enregistrements DNS indiqués) et créez une clé API.
-3. Ajoutez ces variables dans `.env.local` et sur Vercel :
-   - `SUPABASE_SERVICE_ROLE_KEY` : Supabase → **Project Settings → API** → clé `service_role` (secrète, jamais dans le navigateur) ;
-   - `RESEND_API_KEY` : la clé Resend ;
-   - `EMAIL_FROM` : par exemple `Aloa-Mada <bonjour@votre-domaine.com>`.
-4. Optionnel mais conseillé : dans Supabase **Authentication → SMTP Settings**, utilisez aussi Resend (hôte `smtp.resend.com`, port 465, utilisateur `resend`, mot de passe = la clé API) pour les emails de confirmation d'inscription.
+La migration `0002_phase2.sql` est appliquée automatiquement par l'intégration GitHub. Pour les emails, créez un compte sur [resend.com](https://resend.com), vérifiez votre domaine (**Domains → Add domain** + enregistrements DNS), puis ajoutez `RESEND_API_KEY` et `EMAIL_FROM` dans Vercel (étape 2.4 ci-dessus). Conseillé : dans Supabase **Authentication → SMTP Settings**, utilisez aussi Resend (hôte `smtp.resend.com`, port 465, utilisateur `resend`, mot de passe = la clé API) pour les emails de confirmation d'inscription.
 
 Sans ces clés, le site fonctionne normalement mais n'envoie aucun email (un message apparaît dans les logs).
 

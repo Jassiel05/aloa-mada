@@ -1,7 +1,9 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/site";
 
 export type FormState = { error?: string; info?: string } | undefined;
 
@@ -29,7 +31,8 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (password.length < 8) return { error: "Le mot de passe doit contenir au moins 8 caractères." };
 
   const supabase = await createClient();
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  // Le lien de confirmation revient sur le domaine depuis lequel la personne s'inscrit
+  const site = (await headers()).get("origin") ?? siteUrl();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
