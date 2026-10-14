@@ -2,9 +2,8 @@
 
 import { useActionState } from "react";
 import { requestUpgrade } from "@/app/actions/upgrade";
-import { PAYMENT_NUMBERS } from "@/lib/pricing";
 
-export default function UpgradeForm() {
+export default function UpgradeForm({ operators }: { operators: { operator: string; label: string }[] }) {
   const [state, action, pending] = useActionState(requestUpgrade, undefined);
   if (state?.info) return <p role="status" className="mt-6 rounded-xl bg-ravinala-soft p-4 font-semibold text-ravinala-ink">{state.info}</p>;
   return (
@@ -12,7 +11,7 @@ export default function UpgradeForm() {
       <div>
         <label htmlFor="operator" className="label">Opérateur</label>
         <select id="operator" name="operator" className="field">
-          {PAYMENT_NUMBERS.map((n) => <option key={n.operator} value={n.operator}>{n.label}</option>)}
+          {operators.map((n) => <option key={n.operator} value={n.operator}>{n.label}</option>)}
         </select>
       </div>
       <div>

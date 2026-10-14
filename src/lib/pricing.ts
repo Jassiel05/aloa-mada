@@ -1,20 +1,48 @@
-/**
- * Tarifs et numéros de paiement — À COMPLÉTER avant la mise en ligne.
- * Mettez les montants en Ariary par mois (ex. 15000) et vos numéros marchands.
- */
-export const PRICES: { candidate: number | null; recruiter: number | null } = {
-  candidate: null,
-  recruiter: null,
-};
+import { createClient } from "./supabase/server";
 
-export const PAYMENT_NUMBERS: { operator: "mvola" | "orange" | "airtel"; label: string; number: string }[] = [
-  { operator: "mvola", label: "MVola", number: "[VOTRE NUMÉRO MVOLA]" },
-  { operator: "orange", label: "Orange Money", number: "[VOTRE NUMÉRO ORANGE MONEY]" },
-  { operator: "airtel", label: "Airtel Money", number: "[VOTRE NUMÉRO AIRTEL MONEY]" },
+/**
+ * Prix des abonnements Pro et numéros Mobile Money de réception.
+ * Ils se règlent dans /admin › Paramètres (table app_settings) : rien à modifier dans le code.
+ */
+
+export type Operator = "mvola" | "orange" | "airtel";
+
+export const OPERATORS: { operator: Operator; label: string }[] = [
+  { operator: "mvola", label: "MVola" },
+  { operator: "orange", label: "Orange Money" },
+  { operator: "airtel", label: "Airtel Money" },
 ];
 
-export const PAYEE_NAME = "[NOM DU BÉNÉFICIAIRE]";
+export interface AppSettings {
+  candidate_price: number | null;
+  recruiter_price: number | null;
+  payee_name: string | null;
+  mvola_number: string | null;
+  orange_number: string | null;
+  airtel_number: string | null;
+}
+
+const EMPTY: AppSettings = {
+  candidate_price: null,
+  recruiter_price: null,
+  payee_name: null,
+  mvola_number: null,
+  orange_number: null,
+  airtel_number: null,
+};
+
+export async function getSettings(): Promise<AppSettings> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("app_settings").select("*").eq("id", true).maybeSingle();
+  return { ...EMPTY, ...(data ?? {}) };
+}
+
+/** Numéros renseignés au back-office, dans l'ordre MVola, Orange Money, Airtel Money. */
+export function paymentNumbers(s: AppSettings) {
+  const numbers: Record<Operator, string | null> = { mvola: s.mvola_number, orange: s.orange_number, airtel: s.airtel_number };
+  return OPERATORS.map((o) => ({ ...o, number: numbers[o.operator] })).filter((o) => o.number);
+}
 
 export function priceLabel(amount: number | null) {
-  return amount == null ? "[PRIX]" : new Intl.NumberFormat("fr-FR").format(amount);
+  return amount == null ? "Prix bientôt disponible" : `${new Intl.NumberFormat("fr-FR").format(amount)} Ar / mois`;
 }
