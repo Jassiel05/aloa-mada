@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { notifyProActivated, notifyProfileStatus, runTalentAlerts } from "@/lib/notify";
 
 async function adminClient() {
   const supabase = await createClient();
@@ -17,6 +18,8 @@ async function adminClient() {
 export async function approveProfile(id: string) {
   const supabase = await adminClient();
   await supabase.from("profiles").update({ status: "approved", rejection_reason: null }).eq("id", id);
+  await notifyProfileStatus(id, true);
+  await runTalentAlerts(id);
   revalidatePath("/admin");
   revalidatePath("/");
 }
@@ -25,12 +28,15 @@ export async function rejectProfile(id: string, formData: FormData) {
   const supabase = await adminClient();
   const reason = String(formData.get("reason") ?? "").trim() || "Photo non conforme : fond uni, visage net, tenue correcte.";
   await supabase.from("profiles").update({ status: "rejected", rejection_reason: reason }).eq("id", id);
+  await notifyProfileStatus(id, false, reason);
   revalidatePath("/admin");
 }
 
 export async function approveUpgrade(id: string) {
   const supabase = await adminClient();
-  await supabase.rpc("approve_upgrade", { request: id });
+  const { data: req } = await supabase.from("upgrade_requests").select("user_id").eq("id", id).single();
+  const { error } = await supabase.rpc("approve_upgrade", { request: id });
+  if (!error && req) await notifyProActivated(req.user_id);
   revalidatePath("/admin");
 }
 

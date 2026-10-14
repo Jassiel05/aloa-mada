@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { notifyApplication, runOfferAlerts } from "@/lib/notify";
 import type { FormState } from "./auth";
 
 export async function createOffer(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -39,6 +40,7 @@ export async function createOffer(_prev: FormState, formData: FormData): Promise
         : error.message,
     };
   }
+  await runOfferAlerts(data.id);
   revalidatePath("/offres");
   redirect(`/offres/${data.id}`);
 }
@@ -55,6 +57,7 @@ export async function applyToOffer(offerId: string, message: string): Promise<{ 
     if (error.message.includes("row-level security")) return { upgrade: true };
     return { error: error.message };
   }
+  await notifyApplication(offerId, user.id);
   revalidatePath(`/offres/${offerId}`);
   return { ok: true };
 }
