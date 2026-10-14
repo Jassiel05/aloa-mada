@@ -1,20 +1,20 @@
 -- =====================================================================
--- Aloa-Mada — schéma complet (à coller dans Supabase > SQL Editor > Run)
+-- Aloa-Mada — schéma complet (appliqué automatiquement par l'intégration GitHub, rejouable sans erreur)
 -- =====================================================================
 
 -- ---------- Types ----------------------------------------------------
-create type public.user_role as enum ('candidate', 'recruiter', 'admin');
-create type public.user_plan as enum ('simple', 'pro');
-create type public.moderation_status as enum ('draft', 'pending', 'approved', 'rejected');
-create type public.availability as enum ('available', 'available_from', 'employed');
-create type public.rate_unit as enum ('hour', 'day', 'month', 'project', 'negotiable');
-create type public.recruiter_kind as enum ('individual', 'company');
-create type public.offer_status as enum ('open', 'closed');
-create type public.application_status as enum ('sent', 'seen', 'shortlisted', 'rejected');
-create type public.request_status as enum ('pending', 'approved', 'rejected');
+do $$ begin create type public.user_role as enum ('candidate', 'recruiter', 'admin'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.user_plan as enum ('simple', 'pro'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.moderation_status as enum ('draft', 'pending', 'approved', 'rejected'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.availability as enum ('available', 'available_from', 'employed'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.rate_unit as enum ('hour', 'day', 'month', 'project', 'negotiable'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.recruiter_kind as enum ('individual', 'company'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.offer_status as enum ('open', 'closed'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.application_status as enum ('sent', 'seen', 'shortlisted', 'rejected'); exception when duplicate_object then null; end $$;
+do $$ begin create type public.request_status as enum ('pending', 'approved', 'rejected'); exception when duplicate_object then null; end $$;
 
 -- ---------- Tables ---------------------------------------------------
-create table public.profiles (
+create table if not exists public.profiles (
   id               uuid primary key references auth.users (id) on delete cascade,
   role             public.user_role not null default 'candidate',
   plan             public.user_plan not null default 'simple',
@@ -32,14 +32,14 @@ create table public.profiles (
 );
 
 -- Coordonnées séparées : jamais visibles par un candidat Simple
-create table public.profile_contacts (
+create table if not exists public.profile_contacts (
   profile_id uuid primary key references public.profiles (id) on delete cascade,
   email      text,
   phone      text,
   whatsapp   text
 );
 
-create table public.candidate_details (
+create table if not exists public.candidate_details (
   profile_id       uuid primary key references public.profiles (id) on delete cascade,
   job_title        text,
   skills           text[] not null default '{}',
@@ -58,7 +58,7 @@ create table public.candidate_details (
   school           text
 );
 
-create table public.recruiter_details (
+create table if not exists public.recruiter_details (
   profile_id   uuid primary key references public.profiles (id) on delete cascade,
   kind         public.recruiter_kind not null default 'individual',
   company_name text,
@@ -70,7 +70,7 @@ create table public.recruiter_details (
   looking_for  text check (char_length(looking_for) <= 600)
 );
 
-create table public.offers (
+create table if not exists public.offers (
   id            uuid primary key default gen_random_uuid(),
   recruiter_id  uuid not null references public.profiles (id) on delete cascade,
   title         text not null check (char_length(title) between 3 and 120),
@@ -88,7 +88,7 @@ create table public.offers (
   created_at    timestamptz not null default now()
 );
 
-create table public.applications (
+create table if not exists public.applications (
   id           uuid primary key default gen_random_uuid(),
   offer_id     uuid not null references public.offers (id) on delete cascade,
   candidate_id uuid not null references public.profiles (id) on delete cascade,
@@ -98,7 +98,7 @@ create table public.applications (
   unique (offer_id, candidate_id)
 );
 
-create table public.conversations (
+create table if not exists public.conversations (
   id              uuid primary key default gen_random_uuid(),
   user_a          uuid not null references public.profiles (id) on delete cascade,
   user_b          uuid not null references public.profiles (id) on delete cascade,
@@ -109,7 +109,7 @@ create table public.conversations (
   unique (user_a, user_b)
 );
 
-create table public.messages (
+create table if not exists public.messages (
   id              bigint generated always as identity primary key,
   conversation_id uuid not null references public.conversations (id) on delete cascade,
   sender_id       uuid not null references public.profiles (id) on delete cascade,
@@ -118,7 +118,7 @@ create table public.messages (
   created_at      timestamptz not null default now()
 );
 
-create table public.upgrade_requests (
+create table if not exists public.upgrade_requests (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references public.profiles (id) on delete cascade,
   months      int not null default 1 check (months between 1 and 12),
@@ -130,7 +130,7 @@ create table public.upgrade_requests (
   reviewed_at timestamptz
 );
 
-create table public.reports (
+create table if not exists public.reports (
   id                uuid primary key default gen_random_uuid(),
   reporter_id       uuid not null references public.profiles (id) on delete cascade,
   target_profile_id uuid references public.profiles (id) on delete cascade,
@@ -140,7 +140,7 @@ create table public.reports (
   created_at        timestamptz not null default now()
 );
 
-create table public.favorites (
+create table if not exists public.favorites (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references public.profiles (id) on delete cascade,
   profile_id uuid references public.profiles (id) on delete cascade,
@@ -151,12 +151,12 @@ create table public.favorites (
   unique (user_id, offer_id)
 );
 
-create index on public.profiles (status, role);
-create index on public.candidate_details (availability);
-create index on public.offers (status, expires_at);
-create index on public.messages (conversation_id, created_at);
-create index on public.conversations (user_a);
-create index on public.conversations (user_b);
+create index if not exists idx_profiles_status_role on public.profiles (status, role);
+create index if not exists idx_candidate_details_availability on public.candidate_details (availability);
+create index if not exists idx_offers_status_expires_at on public.offers (status, expires_at);
+create index if not exists idx_messages_conversation_id_created_at on public.messages (conversation_id, created_at);
+create index if not exists idx_conversations_user_a on public.conversations (user_a);
+create index if not exists idx_conversations_user_b on public.conversations (user_b);
 
 -- ---------- Fonctions de droits -------------------------------------
 create or replace function public.is_admin()
@@ -201,6 +201,7 @@ create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin new.updated_at := now(); return new; end; $$;
 
+drop trigger if exists profiles_touch on public.profiles;
 create trigger profiles_touch before update on public.profiles
 for each row execute function public.touch_updated_at();
 
@@ -221,6 +222,7 @@ begin
 end;
 $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
 for each row execute function public.handle_new_user();
 
@@ -245,6 +247,7 @@ begin
 end;
 $$;
 
+drop trigger if exists profiles_guard on public.profiles;
 create trigger profiles_guard before update on public.profiles
 for each row execute function public.guard_profile();
 
@@ -257,6 +260,7 @@ begin
 end;
 $$;
 
+drop trigger if exists recruiter_details_guard on public.recruiter_details;
 create trigger recruiter_details_guard before insert or update on public.recruiter_details
 for each row execute function public.guard_recruiter_details();
 
@@ -302,6 +306,7 @@ begin
   return new;
 end; $$;
 
+drop trigger if exists messages_bump on public.messages;
 create trigger messages_bump after insert on public.messages
 for each row execute function public.bump_conversation();
 
@@ -336,82 +341,109 @@ alter table public.reports           enable row level security;
 alter table public.favorites         enable row level security;
 
 -- profiles
+drop policy if exists "profils approuvés visibles" on public.profiles;
 create policy "profils approuvés visibles" on public.profiles for select
   using (status = 'approved' or id = auth.uid() or public.is_admin()
          or exists (select 1 from conversations c where (c.user_a = auth.uid() and c.user_b = profiles.id)
                                                      or (c.user_b = auth.uid() and c.user_a = profiles.id)));
+drop policy if exists "modifier son profil" on public.profiles;
 create policy "modifier son profil" on public.profiles for update
   using (id = auth.uid() or public.is_admin()) with check (id = auth.uid() or public.is_admin());
+drop policy if exists "admin supprime" on public.profiles;
 create policy "admin supprime" on public.profiles for delete using (public.is_admin());
 
 -- coordonnées : soi-même, admin, recruteurs et candidats Pro
+drop policy if exists "voir les coordonnées" on public.profile_contacts;
 create policy "voir les coordonnées" on public.profile_contacts for select
   using (profile_id = auth.uid() or public.is_admin()
          or (public.can('see_contacts')
              and exists (select 1 from profiles p where p.id = profile_id and p.status = 'approved')));
+drop policy if exists "écrire ses coordonnées" on public.profile_contacts;
 create policy "écrire ses coordonnées" on public.profile_contacts for all
   using (profile_id = auth.uid()) with check (profile_id = auth.uid());
 
 -- détails candidat / recruteur
+drop policy if exists "détails candidat visibles" on public.candidate_details;
 create policy "détails candidat visibles" on public.candidate_details for select
   using (profile_id = auth.uid() or public.is_admin()
          or exists (select 1 from profiles p where p.id = profile_id and p.status = 'approved'));
+drop policy if exists "écrire ses détails candidat" on public.candidate_details;
 create policy "écrire ses détails candidat" on public.candidate_details for all
   using (profile_id = auth.uid()) with check (profile_id = auth.uid());
 
+drop policy if exists "détails recruteur visibles" on public.recruiter_details;
 create policy "détails recruteur visibles" on public.recruiter_details for select
   using (profile_id = auth.uid() or public.is_admin()
          or exists (select 1 from profiles p where p.id = profile_id and p.status = 'approved'));
+drop policy if exists "écrire ses détails recruteur" on public.recruiter_details;
 create policy "écrire ses détails recruteur" on public.recruiter_details for all
   using (profile_id = auth.uid()) with check (profile_id = auth.uid());
 
 -- offres
+drop policy if exists "offres ouvertes visibles" on public.offers;
 create policy "offres ouvertes visibles" on public.offers for select
   using ((status = 'open' and expires_at > now()) or recruiter_id = auth.uid() or public.is_admin());
+drop policy if exists "publier une offre (Pro)" on public.offers;
 create policy "publier une offre (Pro)" on public.offers for insert
   with check (recruiter_id = auth.uid() and public.can('publish_offer'));
+drop policy if exists "gérer ses offres" on public.offers;
 create policy "gérer ses offres" on public.offers for update
   using (recruiter_id = auth.uid() or public.is_admin());
+drop policy if exists "supprimer ses offres" on public.offers;
 create policy "supprimer ses offres" on public.offers for delete
   using (recruiter_id = auth.uid() or public.is_admin());
 
 -- candidatures
+drop policy if exists "voir ses candidatures" on public.applications;
 create policy "voir ses candidatures" on public.applications for select
   using (candidate_id = auth.uid() or public.is_admin()
          or exists (select 1 from offers o where o.id = offer_id and o.recruiter_id = auth.uid()));
+drop policy if exists "postuler (Pro)" on public.applications;
 create policy "postuler (Pro)" on public.applications for insert
   with check (candidate_id = auth.uid() and public.can('apply')
               and exists (select 1 from offers o where o.id = offer_id and o.status = 'open' and o.expires_at > now()));
+drop policy if exists "le recruteur change le statut" on public.applications;
 create policy "le recruteur change le statut" on public.applications for update
   using (exists (select 1 from offers o where o.id = offer_id and o.recruiter_id = auth.uid()));
 
 -- conversations (création uniquement via start_conversation)
+drop policy if exists "voir ses conversations" on public.conversations;
 create policy "voir ses conversations" on public.conversations for select
   using (auth.uid() in (user_a, user_b) or public.is_admin());
 
 -- messages : tout participant peut répondre, même un candidat Simple
+drop policy if exists "lire ses messages" on public.messages;
 create policy "lire ses messages" on public.messages for select
   using (exists (select 1 from conversations c where c.id = conversation_id and auth.uid() in (c.user_a, c.user_b))
          or public.is_admin());
+drop policy if exists "répondre dans ses conversations" on public.messages;
 create policy "répondre dans ses conversations" on public.messages for insert
   with check (sender_id = auth.uid()
               and exists (select 1 from conversations c where c.id = conversation_id and auth.uid() in (c.user_a, c.user_b)));
+drop policy if exists "marquer comme lu" on public.messages;
 create policy "marquer comme lu" on public.messages for update
   using (exists (select 1 from conversations c where c.id = conversation_id and auth.uid() in (c.user_a, c.user_b)));
 
 -- demandes de passage en Pro
+drop policy if exists "voir ses demandes" on public.upgrade_requests;
 create policy "voir ses demandes" on public.upgrade_requests for select
   using (user_id = auth.uid() or public.is_admin());
+drop policy if exists "demander le Pro" on public.upgrade_requests;
 create policy "demander le Pro" on public.upgrade_requests for insert
   with check (user_id = auth.uid() and status = 'pending');
+drop policy if exists "admin traite" on public.upgrade_requests;
 create policy "admin traite" on public.upgrade_requests for update using (public.is_admin());
 
 -- signalements
+drop policy if exists "signaler" on public.reports;
 create policy "signaler" on public.reports for insert with check (reporter_id = auth.uid());
+drop policy if exists "admin lit les signalements" on public.reports;
 create policy "admin lit les signalements" on public.reports for select using (public.is_admin());
+drop policy if exists "admin traite les signalements" on public.reports;
 create policy "admin traite les signalements" on public.reports for update using (public.is_admin());
 
 -- favoris
+drop policy if exists "ses favoris" on public.favorites;
 create policy "ses favoris" on public.favorites for all
   using (user_id = auth.uid()) with check (user_id = auth.uid());
 
@@ -420,13 +452,21 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values ('avatars', 'avatars', true, 3145728, array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do nothing;
 
+drop policy if exists "photos lisibles" on storage.objects;
 create policy "photos lisibles" on storage.objects for select using (bucket_id = 'avatars');
+drop policy if exists "déposer sa photo" on storage.objects;
 create policy "déposer sa photo" on storage.objects for insert
   with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "remplacer sa photo" on storage.objects;
 create policy "remplacer sa photo" on storage.objects for update
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "supprimer sa photo" on storage.objects;
 create policy "supprimer sa photo" on storage.objects for delete
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
 -- ---------- Temps réel pour la messagerie ---------------------------
-alter publication supabase_realtime add table public.messages;
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'messages') then
+    alter publication supabase_realtime add table public.messages;
+  end if;
+end $$;

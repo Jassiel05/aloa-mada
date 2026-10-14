@@ -1,12 +1,12 @@
 -- =====================================================================
 -- Aloa-Mada — phase 2 : alertes et vues de profil
--- À coller dans Supabase > SQL Editor > Run, APRÈS 0001_schema.sql
+-- Appliquée automatiquement par l'intégration GitHub de Supabase (rejouable sans erreur)
 -- =====================================================================
 
 -- ---------- Alertes ---------------------------------------------------
 -- Un recruteur est prévenu quand un talent correspondant est validé,
 -- un candidat quand une offre correspondante est publiée.
-create table public.alerts (
+create table if not exists public.alerts (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references public.profiles (id) on delete cascade,
   target     text not null check (target in ('talents', 'offers')),
@@ -17,10 +17,11 @@ create table public.alerts (
   created_at timestamptz not null default now()
 );
 
-create index on public.alerts (target, active);
+create index if not exists idx_alerts_target_active on public.alerts (target, active);
 
 alter table public.alerts enable row level security;
 
+drop policy if exists "ses alertes" on public.alerts;
 create policy "ses alertes" on public.alerts for all
   using (user_id = auth.uid()) with check (user_id = auth.uid());
 
@@ -35,12 +36,13 @@ begin
 end;
 $$;
 
+drop trigger if exists alerts_limit on public.alerts;
 create trigger alerts_limit before insert on public.alerts
 for each row execute function public.limit_alerts();
 
 -- ---------- Vues de profil -------------------------------------------
 -- Une vue par visiteur connecté et par jour, jamais la sienne.
-create table public.profile_views (
+create table if not exists public.profile_views (
   profile_id uuid not null references public.profiles (id) on delete cascade,
   viewer_id  uuid not null references public.profiles (id) on delete cascade,
   day        date not null default current_date,
@@ -49,6 +51,7 @@ create table public.profile_views (
 
 alter table public.profile_views enable row level security;
 
+drop policy if exists "voir les vues de son profil" on public.profile_views;
 create policy "voir les vues de son profil" on public.profile_views for select
   using (profile_id = auth.uid() or public.is_admin());
 
