@@ -87,7 +87,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   profile_employed: "Cette personne est en poste et ne reçoit plus de nouveaux contacts.",
   daily_limit: "Limite de 30 nouveaux contacts par jour atteinte. Réessayez demain.",
   self_contact: "Vous ne pouvez pas vous écrire à vous-même.",
-  };
+};
 
 export function friendlyError(message: string | undefined) {
   if (!message) return "Une erreur est survenue.";
