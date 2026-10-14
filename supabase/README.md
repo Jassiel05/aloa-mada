@@ -25,6 +25,18 @@ values ('0001', 'schema')
 on conflict (version) do nothing;
 ```
 
+## Vérifier ce qui est appliqué
+
+Dans le SQL Editor, après chaque push sur `main` :
+
+```sql
+select version, name from supabase_migrations.schema_migrations order by version;
+```
+
+La liste doit correspondre au tableau ci-dessus. Si la table n'existe pas, l'intégration GitHub
+n'a encore jamais tourné : vérifier **Project Settings › Integrations › GitHub** (dépôt
+`Jassiel05/aloa-mada`, dossier `.`, branche `main`, *Deploy to production*).
+
 ## Accès au back-office
 
 Créer d'abord son compte sur le site, puis, une seule fois, dans le SQL Editor :
