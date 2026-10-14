@@ -1,3 +1,4 @@
+import { SUPABASE_URL } from "./supabase/env";
 import type { Availability, RateUnit } from "./types";
 
 export const CONTRACTS: { value: string; label: string }[] = [
@@ -77,7 +78,7 @@ export function displayName(first: string | null, last: string | null) {
 
 export function photoUrl(path: string | null) {
   if (!path) return null;
-  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
+  return `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
 }
 
 export const ERROR_MESSAGES: Record<string, string> = {
@@ -86,7 +87,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   profile_employed: "Cette personne est en poste et ne reçoit plus de nouveaux contacts.",
   daily_limit: "Limite de 30 nouveaux contacts par jour atteinte. Réessayez demain.",
   self_contact: "Vous ne pouvez pas vous écrire à vous-même.",
-};
+  };
 
 export function friendlyError(message: string | undefined) {
   if (!message) return "Une erreur est survenue.";
