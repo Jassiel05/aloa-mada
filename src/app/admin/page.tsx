@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { requireViewer } from "@/lib/viewer";
+import { getViewer } from "@/lib/viewer";
+import { getSettings } from "@/lib/pricing";
+import SettingsForm from "./SettingsForm";
 import { displayName, photoUrl } from "@/lib/labels";
 import type { ProfileWithDetails } from "@/lib/types";
 import Portrait from "@/components/Portrait";
@@ -24,14 +26,15 @@ const TABS = [
   { key: "paiements", label: "Paiements" },
   { key: "signalements", label: "Signalements" },
   { key: "membres", label: "Membres" },
+  { key: "parametres", label: "Paramètres" },
 ];
 
 type Upgrade = { id: string; months: number; operator: string; reference: string; amount: number | null; created_at: string; user: { id: string; first_name: string | null; last_name: string | null; role: string } | null };
 type Report = { id: string; reason: string; created_at: string; target_profile_id: string | null; target_offer_id: string | null };
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ tab?: string; q?: string }> }) {
-  const viewer = await requireViewer("/admin");
-  if (!viewer.isAdmin) redirect("/");
+  const viewer = await getViewer();
+  if (!viewer?.isAdmin) notFound();
   const { tab = "profils", q } = await searchParams;
   const supabase = await createClient();
 
@@ -40,7 +43,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     supabase.from("upgrade_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "pending"),
   ]);
-  const counts: Record<string, number | null> = { profils: nProfiles, paiements: nPayments, signalements: nReports, membres: null };
+  const counts: Record<string, number | null> = { profils: nProfiles, paiements: nPayments, signalements: nReports, membres: null, parametres: null };
 
   return (
     <main className="container-page py-12">
@@ -58,6 +61,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         {tab === "paiements" && <Payments />}
         {tab === "signalements" && <Reports />}
         {tab === "membres" && <Members q={q} />}
+        {tab === "parametres" && <SettingsForm initial={await getSettings()} />}
       </div>
     </main>
   );

@@ -77,3 +77,33 @@ export async function setPlan(id: string, formData: FormData) {
   }
   revalidatePath("/admin");
 }
+
+/** Prix des abonnements et numéros Mobile Money (table app_settings). */
+export async function saveSettings(_prev: { error?: string; info?: string } | undefined, formData: FormData) {
+  const supabase = await adminClient();
+  const price = (k: string) => {
+    const v = String(formData.get(k) ?? "").replace(/\s/g, "");
+    return v === "" ? null : Math.max(0, Math.round(Number(v)));
+  };
+  const text = (k: string) => String(formData.get(k) ?? "").trim() || null;
+  const candidate = price("candidate_price");
+  const recruiter = price("recruiter_price");
+  if ((candidate != null && Number.isNaN(candidate)) || (recruiter != null && Number.isNaN(recruiter))) {
+    return { error: "Les prix doivent être des nombres (en Ariary)." };
+  }
+  const { error } = await supabase
+    .from("app_settings")
+    .update({
+      candidate_price: candidate,
+      recruiter_price: recruiter,
+      payee_name: text("payee_name"),
+      mvola_number: text("mvola_number"),
+      orange_number: text("orange_number"),
+      airtel_number: text("airtel_number"),
+    })
+    .eq("id", true);
+  if (error) return { error: error.message };
+  revalidatePath("/pro");
+  revalidatePath("/admin");
+  return { info: "Paramètres enregistrés. La page Tarifs est à jour." };
+}
