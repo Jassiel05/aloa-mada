@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireOnboarded } from "@/lib/viewer";
+import { createClient } from "@/lib/supabase/server";
 import { loadProfileInput } from "@/lib/profile-input";
 import ProfileForm from "@/components/ProfileForm";
 import AvailabilityToggle from "./AvailabilityToggle";
@@ -21,6 +22,8 @@ export default async function ProfilPage({ searchParams }: { searchParams: Promi
   const initial = await loadProfileInput(p);
   const role = p.role === "recruiter" ? "recruiter" : "candidate";
   const status = STATUS[p.status];
+  const supabase = await createClient();
+  const { data: views } = await supabase.rpc("my_view_count");
   const expires = p.plan_expires_at ? new Date(p.plan_expires_at).toLocaleDateString("fr-FR") : null;
 
   return (
@@ -44,6 +47,21 @@ export default async function ProfilPage({ searchParams }: { searchParams: Promi
         {status.text}
         {p.status === "rejected" && p.rejection_reason && <span className="mt-1 block font-normal">Motif : {p.rejection_reason}</span>}
       </p>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="card p-5">
+          <p className="font-display text-3xl font-semibold">{typeof views === "number" ? views : 0}</p>
+          <p className="text-sm text-muted">vue{views === 1 ? "" : "s"} de votre fiche en 30 jours</p>
+        </div>
+        <Link href="/favoris" className="card p-5 text-ink no-underline hover:border-ink">
+          <p className="font-bold">Mes favoris</p>
+          <p className="text-sm text-muted">Profils et offres sauvegardés</p>
+        </Link>
+        <Link href="/alertes" className="card p-5 text-ink no-underline hover:border-ink">
+          <p className="font-bold">Mes alertes</p>
+          <p className="text-sm text-muted">Être prévenu par email</p>
+        </Link>
+      </div>
 
       {role === "candidate" && initial.candidate && (
         <AvailabilityToggle current={initial.candidate.availability} />

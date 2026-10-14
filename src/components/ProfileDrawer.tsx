@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import type { Card } from "@/lib/cards";
-import { reportContent, startConversation } from "@/app/actions/contact";
+import { recordView, reportContent, startConversation } from "@/app/actions/contact";
+import FavoriteButton from "./FavoriteButton";
 import Portrait from "./Portrait";
 import UpgradeModal, { type UpgradeKind } from "./UpgradeModal";
 import type { GalleryViewer } from "./Gallery";
@@ -16,6 +17,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
   const [error, setError] = useState<string | null>(null);
   const [reported, setReported] = useState(false);
   const [pending, startTransition] = useTransition();
+  const viewerId = viewer?.id ?? null;
 
   useEffect(() => {
     const d = ref.current;
@@ -26,7 +28,8 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
     setError(null);
     setReported(false);
     setMessage(card ? `Bonjour ${card.first}, votre profil m'intéresse. Êtes-vous disponible pour en parler ?` : "");
-  }, [card]);
+    if (card && viewerId && viewerId !== card.id) recordView(card.id).catch(() => {});
+  }, [card, viewerId]);
 
   if (!card) return <dialog ref={ref} className="hidden" />;
 
@@ -75,6 +78,11 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
             <button type="button" onClick={onClose} aria-label="Fermer la fiche" className="absolute top-4 right-4 grid size-11 place-items-center rounded-full bg-white">
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
             </button>
+            {viewer && !isSelf && (
+              <div className="absolute top-4 right-18">
+                <FavoriteButton key={card.id} profileId={card.id} initial={viewer.favorites.includes(card.id)} />
+              </div>
+            )}
             {card.isPro && <span className="absolute top-4 left-4 rounded-full bg-laterite px-2.5 py-1 text-[11px] font-bold tracking-wider text-white">PRO</span>}
           </div>
 

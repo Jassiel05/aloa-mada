@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { sendMessage } from "@/app/actions/contact";
 
 export type Msg = { id: number; sender_id: string; body: string; created_at: string };
 
@@ -40,15 +41,12 @@ export default function Thread({ conversationId, me, initial }: { conversationId
     if (!body) return;
     setSending(true);
     setError(null);
-    const { data, error: err } = await supabase
-      .from("messages")
-      .insert({ conversation_id: conversationId, sender_id: me, body })
-      .select("id, sender_id, body, created_at")
-      .single();
+    const res = await sendMessage(conversationId, body);
     setSending(false);
-    if (err) return setError("Message non envoyé. Réessayez.");
+    if (!("message" in res) || !res.message) return setError(res.error ?? "Message non envoyé. Réessayez.");
+    const m = res.message;
     setText("");
-    setMessages((prev) => (prev.some((x) => x.id === data.id) ? prev : [...prev, data as Msg]));
+    setMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [...prev, m]));
   }
 
   return (

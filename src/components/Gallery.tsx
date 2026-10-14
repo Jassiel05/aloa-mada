@@ -5,7 +5,7 @@ import type { Card } from "@/lib/cards";
 import Portrait from "./Portrait";
 import ProfileDrawer from "./ProfileDrawer";
 
-export type GalleryViewer = { id: string; canStart: boolean } | null;
+export type GalleryViewer = { id: string; canStart: boolean; favorites: string[] } | null;
 
 export default function Gallery({ cards, initialId, viewer }: { cards: Card[]; initialId: string | null; viewer: GalleryViewer }) {
   const [openId, setOpenId] = useState<string | null>(initialId);

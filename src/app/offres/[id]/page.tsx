@@ -5,6 +5,7 @@ import { getViewer } from "@/lib/viewer";
 import { contractLabel, displayName, formatRate, workModeLabel } from "@/lib/labels";
 import type { Offer, Profile } from "@/lib/types";
 import ApplyBox from "./ApplyBox";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default async function OfferPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,6 +19,11 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
   if (viewer?.profile.role === "candidate") {
     const { count } = await supabase.from("applications").select("id", { count: "exact", head: true }).eq("offer_id", id).eq("candidate_id", viewer.id);
     alreadyApplied = (count ?? 0) > 0;
+  }
+  let saved = false;
+  if (viewer) {
+    const { count } = await supabase.from("favorites").select("id", { count: "exact", head: true }).eq("user_id", viewer.id).eq("offer_id", id);
+    saved = (count ?? 0) > 0;
   }
   const expired = offer.status !== "open" || new Date(offer.expires_at) < new Date();
 
@@ -35,6 +41,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
         <dt className="text-muted">Expire le</dt><dd className="font-semibold">{new Date(offer.expires_at).toLocaleDateString("fr-FR")}</dd>
       </dl>
       <div className="mt-8 text-[17px] leading-relaxed whitespace-pre-line">{offer.description}</div>
+      {viewer && <div className="mt-6"><FavoriteButton offerId={offer.id} initial={saved} variant="text" /></div>}
 
       <div className="mt-10">
         {expired ? (

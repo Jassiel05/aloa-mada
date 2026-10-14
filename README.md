@@ -2,7 +2,7 @@
 
 Plateforme de mise en relation directe entre recruteurs et candidats à Madagascar : une galerie de portraits, une fiche par personne, un message en deux clics.
 
-**Stack :** Next.js 15 (App Router) · TypeScript · Tailwind CSS 4 · Supabase (Postgres, Auth, Storage, Realtime) · Vercel.
+**Stack :** Next.js 15 (App Router) · TypeScript · Tailwind CSS 4 · Supabase (Postgres, Auth, Storage, Realtime) · Resend (emails) · Vercel.
 
 ## Ce qui est en place (phase 1)
 
@@ -66,6 +66,30 @@ npm run dev
 - `src/app/cgu` et `src/app/confidentialite` : textes juridiques (les parties `[À COMPLÉTER]`).
 - Emails Supabase (**Authentication → Emails**) : traduire les modèles en français. Pour plus de 2 à 4 emails par heure, branchez un SMTP (Resend, Brevo…) dans **Authentication → SMTP Settings**.
 
-## Prochaines étapes (phase 2)
+## Phase 2 : emails, favoris, alertes, vues
 
-Notifications email à chaque nouveau message, favoris et alertes, paiement Mobile Money automatique, statistiques de vues de profil.
+| Fonction | Où |
+| --- | --- |
+| Email à chaque nouveau message (un seul tant que la conversation n'est pas lue) | automatique |
+| Email au recruteur à chaque candidature reçue | automatique |
+| Email au membre quand son profil est validé ou refusé, et quand son Pro est activé | automatique depuis `/admin` |
+| Favoris (cœur sur les fiches et les offres) | `/favoris` |
+| Alertes par email : nouveaux talents pour les recruteurs, nouvelles offres pour les candidats | `/alertes` |
+| Nombre de vues de sa fiche sur 30 jours | `/profil` |
+| Galerie paginée (« Voir plus de profils ») et liens directs vers une fiche (`/?p=…`) | `/` |
+
+### Mise en place
+
+1. Dans Supabase **SQL Editor**, exécutez `supabase/migrations/0002_phase2.sql` (après le 0001).
+2. Créez un compte sur [resend.com](https://resend.com), vérifiez votre domaine (**Domains → Add domain**, puis ajoutez les enregistrements DNS indiqués) et créez une clé API.
+3. Ajoutez ces variables dans `.env.local` et sur Vercel :
+   - `SUPABASE_SERVICE_ROLE_KEY` : Supabase → **Project Settings → API** → clé `service_role` (secrète, jamais dans le navigateur) ;
+   - `RESEND_API_KEY` : la clé Resend ;
+   - `EMAIL_FROM` : par exemple `Aloa-Mada <bonjour@votre-domaine.com>`.
+4. Optionnel mais conseillé : dans Supabase **Authentication → SMTP Settings**, utilisez aussi Resend (hôte `smtp.resend.com`, port 465, utilisateur `resend`, mot de passe = la clé API) pour les emails de confirmation d'inscription.
+
+Sans ces clés, le site fonctionne normalement mais n'envoie aucun email (un message apparaît dans les logs).
+
+## Prochaines étapes
+
+Paiement Mobile Money automatique (API MVola ou agrégateur), mise en avant payante d'une offre, version malgache.
