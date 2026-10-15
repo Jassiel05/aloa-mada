@@ -39,10 +39,11 @@ const columns = (loggedIn: boolean) => [
 export default async function Footer() {
   const [s, viewer] = await Promise.all([getSettings(), getViewer()]);
   return (
-    <footer className="mt-20 bg-forest text-white/75">
+    <footer className="mt-20 bg-night text-white/75">
+      <div aria-hidden="true" className="brand-gradient h-1" />
       <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="col-span-2 max-w-xs md:col-span-1">
-          <Logo tone="light" />
+          <Logo className="h-9 w-auto" />
           <p className="mt-4 text-sm leading-relaxed">
             La plateforme de recrutement direct à Madagascar. Des profils avec photo, vérifiés un par un, et un contact en deux clics.
           </p>

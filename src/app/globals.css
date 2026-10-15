@@ -2,34 +2,38 @@
 
 @theme {
   /* Fonds */
-  --color-canvas: #f4f6f5;
-  --color-subtle: #eaefec;
+  --color-canvas: #f6f7fb;
+  --color-subtle: #eef0f6;
   /* Texte */
-  --color-ink: #13201b;
-  --color-muted: #586660;
+  --color-ink: #17162b;
+  --color-muted: #5d6075;
   /* Traits */
-  --color-line: #e1e7e3;
-  --color-field: #c9d3ce;
-  /* Marque : vert ravinala */
-  --color-forest: #0d2b22;
-  --color-forest-soft: #16392e;
-  --color-brand: #0e8a5f;
-  --color-brand-dark: #0a6b4a;
-  --color-brand-soft: #e2f3ea;
-  --color-brand-ink: #075238;
+  --color-line: #e4e6ef;
+  --color-field: #cfd3e0;
+  /* Marque aloa : nuit (fonds sombres) et bleu (actions) */
+  --color-night: #17133f;
+  --color-night-soft: #241d5a;
+  --color-brand: #0277c2;
+  --color-brand-dark: #035f9c;
+  --color-brand-soft: #e4f2fc;
+  --color-brand-ink: #034a7a;
+  /* Les 5 couleurs du logo */
+  --color-aloa-cyan: #00d7db;
+  --color-aloa-blue: #0286d3;
+  --color-aloa-orange: #fd9134;
+  --color-aloa-pink: #f43969;
+  --color-aloa-purple: #6a41d6;
   /* Statuts */
   --color-available: #19b36b;
-  --color-employed: #a3aca8;
-  --color-gold: #f5b82e;
-  --color-gold-soft: #fff3d6;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdecea;
+  --color-employed: #a6a9b8;
+  --color-danger: #c4213f;
+  --color-danger-soft: #fdebef;
 
   --font-display: "Bricolage Grotesque Variable", "Manrope Variable", system-ui, sans-serif;
   --font-sans: "Manrope Variable", system-ui, sans-serif;
 
-  --shadow-soft: 0 1px 2px rgb(13 43 34 / 0.05), 0 8px 24px -12px rgb(13 43 34 / 0.18);
-  --shadow-lift: 0 2px 4px rgb(13 43 34 / 0.06), 0 24px 48px -20px rgb(13 43 34 / 0.35);
+  --shadow-soft: 0 1px 2px rgb(23 19 63 / 0.05), 0 8px 24px -12px rgb(23 19 63 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(23 19 63 / 0.06), 0 24px 48px -20px rgb(23 19 63 / 0.35);
 }
 
 @layer base {
@@ -82,7 +86,7 @@
 }
 
 @utility btn-dark {
-  @apply btn bg-forest text-white hover:bg-forest-soft;
+  @apply btn bg-night text-white hover:bg-night-soft;
 }
 
 @utility btn-outline {
@@ -94,7 +98,7 @@
 }
 
 @utility field {
-  @apply min-h-12 w-full rounded-xl border border-field bg-white px-4 text-[15px] text-ink transition-colors placeholder:text-[#8c9893] focus:border-brand focus:outline-none focus-visible:outline-none focus:ring-4 focus:ring-brand/15;
+  @apply min-h-12 w-full rounded-xl border border-field bg-white px-4 text-[15px] text-ink transition-colors placeholder:text-[#8d90a3] focus:border-brand focus:outline-none focus-visible:outline-none focus:ring-4 focus:ring-brand/15;
 }
 
 @utility label {
@@ -102,7 +106,7 @@
 }
 
 @utility chip {
-  @apply inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-field bg-white px-4 text-sm font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink has-[:checked]:border-forest has-[:checked]:bg-forest has-[:checked]:text-white has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand;
+  @apply inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-field bg-white px-4 text-sm font-semibold whitespace-nowrap text-ink transition-colors hover:border-ink has-[:checked]:border-night has-[:checked]:bg-night has-[:checked]:text-white has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand;
 }
 
 @utility card {
@@ -119,4 +123,15 @@
 
 @utility section-title {
   @apply font-display text-2xl leading-tight font-bold text-ink sm:text-[28px];
+}
+
+/* Dégradé de la marque (les 5 couleurs du logo, dans l'ordre) */
+@utility brand-gradient {
+  background-image: linear-gradient(90deg, #00d7db, #0286d3 30%, #fd9134 55%, #f43969 78%, #6a41d6);
+}
+
+/* Badge Pro : rose vers violet, comme le dernier « a » du logo */
+@utility pro-badge {
+  @apply rounded-full font-extrabold text-white;
+  background-image: linear-gradient(90deg, #f43969, #6a41d6);
 }

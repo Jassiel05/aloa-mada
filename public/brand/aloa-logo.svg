@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 708 240" fill="none" stroke-width="27.5">
+  <defs>
+    <linearGradient id="aloa-a1" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="192" y2="0"><stop offset="0" stop-color="#00d7db"/><stop offset="0.55" stop-color="#00c4da"/><stop offset="1" stop-color="#0294d4"/></linearGradient>
+    <linearGradient id="aloa-a1t" gradientUnits="userSpaceOnUse" x1="17.28" y1="161.59" x2="70.82" y2="218.01"><stop offset="0" stop-color="#00d5db"/><stop offset="1" stop-color="#00d5db" stop-opacity="0"/></linearGradient>
+    <linearGradient id="aloa-l" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="240"><stop offset="0" stop-color="#02b2d7"/><stop offset="1" stop-color="#0286d3"/></linearGradient>
+    <linearGradient id="aloa-o" gradientUnits="userSpaceOnUse" x1="310" y1="70" x2="470" y2="215"><stop offset="0.3" stop-color="#fd9134"/><stop offset="1" stop-color="#f6564f"/></linearGradient>
+    <linearGradient id="aloa-a2" gradientUnits="userSpaceOnUse" x1="560" y1="100" x2="680" y2="200"><stop offset="0" stop-color="#f43969"/><stop offset="1" stop-color="#6a41d6"/></linearGradient>
+    <linearGradient id="aloa-a2t" gradientUnits="userSpaceOnUse" x1="568.31" y1="209.62" x2="647.23" y2="213.75"><stop offset="0" stop-color="#b03d9e"/><stop offset="1" stop-color="#9a3fb0" stop-opacity="0"/></linearGradient>
+  </defs>
+  <path d="M17.28 161.59A81.5 81.5 0 1 1 177.5 140.5" stroke="url(#aloa-a1)"/>
+  <path d="M177.5 140.5V224.25" stroke="url(#aloa-a1)" stroke-linecap="round"/>
+  <path d="M16.0 156.05A81.5 81.5 0 0 0 70.82 218.01" stroke="url(#aloa-a1t)"/>
+  <path d="M238.5 14.75V196.5A28 28 0 0 0 266.5 224.5" stroke="url(#aloa-l)" stroke-linecap="round"/>
+  <circle cx="389.25" cy="140.5" r="81.75" stroke="url(#aloa-o)"/>
+  <path d="M568.31 209.62A81.5 81.5 0 1 1 693 140.5" stroke="url(#aloa-a2)"/>
+  <path d="M693 140.5V190.5" stroke="url(#aloa-a2)" stroke-linecap="round"/>
+  <path d="M563.6 206.43A81.5 81.5 0 0 0 647.23 213.75" stroke="url(#aloa-a2t)"/>
+  <circle cx="693" cy="224.5" r="13.75" fill="#6a41d6"/>
+</svg>

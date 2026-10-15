@@ -32,6 +32,7 @@ export default async function Header() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur-md">
+      <div aria-hidden="true" className="brand-gradient h-[3px]" />
       <div className="container-page relative flex h-16 items-center justify-between gap-4">
         <Logo />
 
