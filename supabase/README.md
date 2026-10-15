@@ -12,6 +12,7 @@
 | `0006` | `migrations/0006_oauth.sql` | Connexion Google / Apple : prénom et nom repris du compte Google ou Apple à la création du profil |
 | `0007` | `migrations/0007_cv_portfolio.sql` | CV des candidats (espace privé `cvs`, 2 Mo max, visible par la personne, les recruteurs, les membres Pro et l'admin) ; liens portfolio et site web limités à http(s) ; photos limitées à 1 Mo |
 | `0008` | `migrations/0008_admin_emails.sql` | Accès admin sans SQL : les emails de la table `admin_emails` deviennent admin dès que l'email est confirmé |
+| `0009` | `migrations/0009_admin_email_fix.sql` | Adresse admin corrigée : rakotoarinelinajassiel@gmail.com |
 
 ## Application
 
@@ -43,7 +44,7 @@ n'a encore jamais tourné : vérifier **Project Settings › Integrations › Gi
 
 ## Accès au back-office
 
-`responsable@bex-digital.com` est admin d'office : il suffit de créer son compte sur le site avec cet email
+`rakotoarinelinajassiel@gmail.com` est admin d'office : il suffit de créer son compte sur le site avec cet email
 (ou « Continuer avec Google ») et de confirmer l'email. Pour un autre admin : Table Editor › `admin_emails` › Insert row.
 
 Le lien « Back-office » apparaît alors dans le menu (`/admin`). Pour tout autre compte, cette adresse
@@ -52,7 +53,7 @@ renvoie une page 404. Les prix, les numéros Mobile Money, l'éditeur et le cont
 
 ## Règles pour les prochaines migrations
 
-- Un fichier par évolution (`0009_<description>.sql`, …), sans jamais modifier une migration
+- Un fichier par évolution (`0010_<description>.sql`, …), sans jamais modifier une migration
   déjà appliquée en production.
 - **Toute nouvelle table reçoit ses `GRANT` explicites** (voir `0003`), en plus de sa RLS.
 - Écrire des scripts rejouables : `create table if not exists`, `on conflict do nothing`,
