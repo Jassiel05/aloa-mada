@@ -146,7 +146,7 @@ async function Payments() {
   const rows = (data ?? []) as unknown as Upgrade[];
   if (!rows.length) return <p className="card p-8 text-muted">Aucun paiement à vérifier.</p>;
   return (
-    <div className="card overflow-x-auto">
+    <div className="card relative overflow-x-auto">
       <table className="w-full min-w-[720px] text-left text-sm">
         <thead className="border-b border-line text-muted">
           <tr><th className="p-4">Membre</th><th className="p-4">Opérateur</th><th className="p-4">Référence</th><th className="p-4">Durée</th><th className="p-4">Montant (Ar)</th><th className="p-4">Date</th><th className="p-4" /></tr>
@@ -209,13 +209,13 @@ async function Members({ q }: { q?: string }) {
   const rows = (data ?? []) as ProfileWithDetails[];
   return (
     <div>
-      <form method="get" className="mb-4 flex gap-2">
+      <form method="get" className="mb-4 flex flex-wrap gap-2">
         <input type="hidden" name="tab" value="membres" />
         <label htmlFor="mq" className="sr-only">Rechercher un membre</label>
-        <input id="mq" name="q" defaultValue={q} placeholder="Prénom ou nom" className="field max-w-sm" />
+        <input id="mq" name="q" defaultValue={q} placeholder="Prénom ou nom" className="field min-w-0 max-w-sm flex-1" />
         <button type="submit" className="btn-primary">Chercher</button>
       </form>
-      <div className="card overflow-x-auto">
+      <div className="card relative overflow-x-auto">
         <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="border-b border-line text-muted">
             <tr><th className="p-4">Membre</th><th className="p-4">Rôle</th><th className="p-4">Statut</th><th className="p-4">Plan</th><th className="p-4">Abonnement</th><th className="p-4">Entreprise</th><th className="p-4">Supprimer</th></tr>
