@@ -115,11 +115,12 @@ async function PendingProfiles() {
       {rows.map((p) => (
         <li key={p.id} className="card flex gap-4 p-4">
           <span className="relative block aspect-[4/5] w-32 flex-none overflow-hidden rounded-xl">
-            <Portrait id={p.id} src={photoUrl(p.photo_path)} alt={`Photo de ${p.first_name ?? "membre"}`} sizes="128px" />
+            <Portrait id={p.id} src={photoUrl(p.photo_path)} gender={p.gender} alt={`Photo de ${p.first_name ?? "membre"}`} sizes="128px" />
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <p className="font-bold">{displayName(p.first_name, p.last_name)} <span className="font-normal text-muted">· {p.role === "recruiter" ? "Recruteur" : "Candidat"}</span></p>
             <p className="text-sm text-muted">{p.candidate_details?.job_title ?? p.recruiter_details?.company_name ?? ""} {p.city ? `· ${p.city}` : ""}</p>
+            {p.photo_hidden && <p className="text-xs font-bold text-brand-ink">Photo masquée au public (silhouette {p.gender ?? "neutre"})</p>}
             {p.headline && <p className="text-sm">{p.headline}</p>}
             <div className="mt-auto flex flex-wrap gap-2">
               <form action={approveProfile.bind(null, p.id)}><button type="submit" className="btn-primary min-h-10">Valider</button></form>
