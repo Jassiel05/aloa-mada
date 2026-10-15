@@ -81,6 +81,11 @@ export function photoUrl(path: string | null) {
   return `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
 }
 
+/** Photo affichée aux autres : rien si le membre a choisi de la masquer (une silhouette la remplace). */
+export function publicPhoto(p: { photo_path: string | null; photo_hidden?: boolean | null }) {
+  return p.photo_hidden ? null : photoUrl(p.photo_path);
+}
+
 export const ERROR_MESSAGES: Record<string, string> = {
   upgrade_required: "Cette action est réservée aux comptes Pro.",
   profile_unavailable: "Ce profil n'est plus disponible.",

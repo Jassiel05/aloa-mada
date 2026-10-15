@@ -1,4 +1,4 @@
-import { availabilityLabel, contractLabel, displayName, formatRate, photoUrl, workModeLabel } from "./labels";
+import { availabilityLabel, contractLabel, displayName, formatRate, publicPhoto, workModeLabel } from "./labels";
 import type { Contacts, ProfileWithDetails } from "./types";
 
 /** Données d'un portrait, prêtes à afficher (sérialisables vers le client). */
@@ -8,6 +8,7 @@ export interface Card {
   name: string;
   first: string;
   photo: string | null;
+  gender: "homme" | "femme" | null;
   title: string;
   city: string;
   headline: string | null;
@@ -41,7 +42,8 @@ export function toCard(p: ProfileWithDetails, contacts?: Contacts): Card {
     role: p.role,
     name: displayName(p.first_name, p.last_name),
     first: p.first_name?.trim() || "ce membre",
-    photo: photoUrl(p.photo_path),
+    photo: publicPhoto(p),
+    gender: p.gender ?? null,
     title: c?.job_title || (r ? (company ? `Recruteur · ${company}` : "Recruteur particulier") : "Membre"),
     city: p.city ?? "",
     headline: p.headline,

@@ -16,6 +16,8 @@ export interface Profile {
   city: string | null;
   photo_path: string | null;
   headline: string | null;
+  gender: "homme" | "femme" | null;
+  photo_hidden: boolean;
   onboarded: boolean;
   created_at: string;
 }

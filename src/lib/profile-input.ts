@@ -17,6 +17,8 @@ export async function loadProfileInput(profile: Profile): Promise<ProfileInput> 
     city: profile.city ?? "",
     headline: profile.headline ?? "",
     photo_path: profile.photo_path,
+    photo_hidden: !!profile.photo_hidden,
+    gender: profile.gender ?? "",
     phone: contacts?.phone ?? "",
     whatsapp: contacts?.whatsapp ?? "",
     cv: cand?.cv_path ? { size: cand.cv_size, updatedAt: cand.cv_updated_at } : null,

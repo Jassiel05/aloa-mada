@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireOnboarded } from "@/lib/viewer";
-import { displayName, photoUrl } from "@/lib/labels";
+import { displayName, publicPhoto } from "@/lib/labels";
 import type { Profile } from "@/lib/types";
 import Portrait from "@/components/Portrait";
 
@@ -56,7 +56,7 @@ export default async function MessagesPage() {
               <li key={c.id}>
                 <Link href={`/messages/${c.id}`} className="flex items-center gap-4 px-4 py-4 text-ink no-underline hover:bg-canvas hover:no-underline sm:px-5">
                   <span className="relative block aspect-[4/5] w-12 flex-none overflow-hidden rounded-lg">
-                    <Portrait id={other?.id ?? c.id} src={photoUrl(other?.photo_path ?? null)} alt="" sizes="48px" />
+                    <Portrait id={other?.id ?? c.id} src={other ? publicPhoto(other) : null} gender={other?.gender} alt="" sizes="48px" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline justify-between gap-3">

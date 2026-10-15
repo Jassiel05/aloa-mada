@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireOnboarded } from "@/lib/viewer";
-import { contractLabel, displayName, formatRate, photoUrl } from "@/lib/labels";
+import { contractLabel, displayName, formatRate, publicPhoto } from "@/lib/labels";
 import type { Offer, Profile } from "@/lib/types";
 import Portrait from "@/components/Portrait";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -40,10 +40,10 @@ export default async function FavorisPage() {
           {people.map(({ profile: p }) => (
             <li key={p!.id} className="relative">
               <Link href={`/?p=${p!.id}`} className="group relative block aspect-[4/5] overflow-hidden rounded-2xl">
-                <Portrait id={p!.id} src={photoUrl(p!.photo_path)} alt="" />
+                <Portrait id={p!.id} src={publicPhoto(p!)} gender={p!.gender} alt="" />
                 <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-night/55 to-night/95 px-3 pt-12 pb-3 text-white">
-                  <span className="font-display text-lg font-bold">{displayName(p!.first_name, p!.last_name)}</span>
-                  <span className="text-xs font-semibold">{p!.candidate_details?.job_title ?? "Recruteur"}</span>
+                  <span className="line-clamp-2 font-display text-lg leading-tight font-bold">{p!.candidate_details?.job_title ?? "Recruteur"}</span>
+                  <span className="mt-0.5 text-xs font-semibold text-white/85">{displayName(p!.first_name, p!.last_name)}</span>
                 </span>
               </Link>
               <div className="absolute top-3 right-3">
