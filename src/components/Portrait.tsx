@@ -32,6 +32,7 @@ export default function Portrait({
           fill
           sizes={sizes}
           priority={priority}
+          quality={70}
           className={`object-cover transition-transform duration-500 group-hover:scale-[1.03] ${grayscale ? "grayscale" : ""}`}
         />
       ) : (

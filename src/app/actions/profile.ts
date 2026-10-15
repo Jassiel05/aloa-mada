@@ -12,6 +12,8 @@ export interface ProfileInput {
   photo_path: string | null;
   phone: string;
   whatsapp: string;
+  /** Lecture seule : CV déjà enregistré (géré par saveCv / removeCv) */
+  cv?: { size: number | null; updatedAt: string | null } | null;
   candidate?: {
     job_title: string;
     skills: string[];
@@ -42,6 +44,19 @@ export interface ProfileInput {
 
 const clean = (s: string | undefined | null) => (s ?? "").trim() || null;
 
+/** Lien saisi par le membre → adresse http(s) propre, « https:// » ajouté si besoin. */
+function cleanUrl(s: string | undefined | null): { url: string | null; bad?: boolean } {
+  const raw = clean(s);
+  if (!raw) return { url: null };
+  try {
+    const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`);
+    if ((u.protocol !== "https:" && u.protocol !== "http:") || !u.hostname.includes(".")) return { url: null, bad: true };
+    return { url: u.toString().slice(0, 300) };
+  } catch {
+    return { url: null, bad: true };
+  }
+}
+
 export async function saveProfile(input: ProfileInput, submit: boolean): Promise<{ error?: string; ok?: boolean }> {
   const supabase = await createClient();
   const {
@@ -55,6 +70,11 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
     if (input.candidate && !clean(input.candidate.job_title)) return { error: "Indiquez votre métier." };
     if (input.candidate && input.candidate.contract_types.length === 0) return { error: "Choisissez au moins un type de collaboration." };
   }
+
+  const portfolio = cleanUrl(input.candidate?.portfolio_url);
+  if (portfolio.bad) return { error: "Le lien portfolio n'est pas valide (ex. https://behance.net/votre-nom)." };
+  const website = cleanUrl(input.recruiter?.website);
+  if (website.bad) return { error: "L'adresse du site web n'est pas valide (ex. https://votre-entreprise.mg)." };
 
   const { data: current } = await supabase.from("profiles").select("status, role").eq("id", user.id).single();
   const nextStatus = submit && current && (current.status === "draft" || current.status === "rejected") ? "pending" : undefined;
@@ -94,7 +114,7 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
       available_from: c.availability === "available_from" ? c.available_from : null,
       work_modes: c.work_modes,
       bio: clean(c.bio),
-      portfolio_url: clean(c.portfolio_url),
+      portfolio_url: portfolio.url,
       notice_period: clean(c.notice_period),
       school: clean(c.school),
     });
@@ -109,7 +129,7 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
       company_name: r.kind === "company" ? clean(r.company_name) : null,
       sector: clean(r.sector),
       company_size: clean(r.company_size),
-      website: clean(r.website),
+      website: website.url,
       nif_stat: clean(r.nif_stat),
       looking_for: clean(r.looking_for),
     });
@@ -129,4 +149,38 @@ export async function setAvailability(availability: Availability) {
   if (!user) return;
   await supabase.from("candidate_details").update({ availability }).eq("profile_id", user.id);
   revalidatePath("/", "layout");
+}
+
+/** Enregistre le CV que le navigateur vient d'envoyer (déjà compressé) et supprime l'ancien. */
+export async function saveCv(path: string, size: number): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expirée, reconnectez-vous." };
+  if (!path.startsWith(`${user.id}/`) || !path.endsWith(".pdf")) return { error: "Fichier invalide." };
+  const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (me?.role !== "candidate") return { error: "Le CV est réservé aux profils candidats." };
+
+  const { data: before } = await supabase.from("candidate_details").select("cv_path").eq("profile_id", user.id).maybeSingle();
+  const { error } = await supabase
+    .from("candidate_details")
+    .upsert({ profile_id: user.id, cv_path: path, cv_size: Math.round(size), cv_updated_at: new Date().toISOString() });
+  if (error) return { error: "Enregistrement impossible. Réessayez." };
+  if (before?.cv_path && before.cv_path !== path) await supabase.storage.from("cvs").remove([before.cv_path]);
+  revalidatePath("/", "layout");
+  return {};
+}
+
+export async function removeCv(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expirée, reconnectez-vous." };
+  const { data: before } = await supabase.from("candidate_details").select("cv_path").eq("profile_id", user.id).maybeSingle();
+  await supabase.from("candidate_details").update({ cv_path: null, cv_size: null, cv_updated_at: null }).eq("profile_id", user.id);
+  if (before?.cv_path) await supabase.storage.from("cvs").remove([before.cv_path]);
+  revalidatePath("/", "layout");
+  return {};
 }

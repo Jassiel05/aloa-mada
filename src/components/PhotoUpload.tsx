@@ -4,27 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { photoUrl } from "@/lib/labels";
-
-/** Recadre au centre en 4:5 (800×1000), compresse en JPEG puis envoie dans Supabase Storage. */
-async function cropTo45(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const W = 800;
-  const H = 1000;
-  const ratio = W / H;
-  let sw = bitmap.width;
-  let sh = bitmap.height;
-  if (sw / sh > ratio) sw = sh * ratio;
-  else sh = sw / ratio;
-  const sx = (bitmap.width - sw) / 2;
-  const sy = Math.max(0, (bitmap.height - sh) / 3); // garde le visage, légèrement vers le haut
-  const canvas = document.createElement("canvas");
-  canvas.width = W;
-  canvas.height = H;
-  canvas.getContext("2d")!.drawImage(bitmap, sx, sy, sw, sh, 0, 0, W, H);
-  return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("conversion"))), "image/jpeg", 0.86),
-  );
-}
+import { compressPortrait } from "@/lib/compress";
 
 export default function PhotoUpload({ userId, value, onChange }: { userId: string; value: string | null; onChange: (path: string) => void }) {
   const input = useRef<HTMLInputElement>(null);
@@ -35,13 +15,17 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
   async function onFile(file: File | undefined) {
     if (!file) return;
     setError(null);
-    if (!file.type.startsWith("image/")) return setError("Choisissez une image (JPG, PNG ou WebP).");
+    if (file.type && !file.type.startsWith("image/")) return setError("Choisissez une image (JPG, PNG ou WebP).");
     setBusy(true);
     try {
-      const blob = await cropTo45(file);
-      const path = `${userId}/${Date.now()}.jpg`;
+      // Recadrée en 4:5 et compressée (moins de 120 Ko) avant l'envoi
+      const blob = await compressPortrait(file);
+      const ext = blob.type === "image/webp" ? "webp" : "jpg";
+      const path = `${userId}/${Date.now()}.${ext}`;
       const supabase = createClient();
-      const { error: upErr } = await supabase.storage.from("avatars").upload(path, blob, { contentType: "image/jpeg", upsert: false });
+      const { error: upErr } = await supabase.storage
+        .from("avatars")
+        .upload(path, blob, { contentType: blob.type, upsert: false, cacheControl: "31536000" });
       if (upErr) throw upErr;
       if (value) await supabase.storage.from("avatars").remove([value]);
       onChange(path);
@@ -61,7 +45,7 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
         aria-label={url ? "Changer la photo" : "Ajouter une photo portrait"}
       >
         {url ? (
-          <Image src={url} alt="Votre photo portrait" fill sizes="180px" className="object-cover" />
+          <Image src={url} alt="Votre photo portrait" fill sizes="180px" quality={70} className="object-cover" />
         ) : (
           <span className="absolute inset-0 grid place-items-center px-4 text-center text-sm font-semibold text-muted">
             {busy ? "Envoi…" : "+ Ajouter ma photo"}
@@ -76,7 +60,7 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
           <li>Pas de lunettes de soleil, de groupe ni de filtre</li>
         </ul>
         <p className="mt-2 text-muted">Elle est recadrée automatiquement au format portrait et vérifiée avant publication.</p>
-        <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
+        <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
         <button type="button" onClick={() => input.current?.click()} disabled={busy} className="btn-outline mt-3">
           {busy ? "Envoi…" : url ? "Changer la photo" : "Choisir une photo"}
         </button>
