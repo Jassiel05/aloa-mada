@@ -51,7 +51,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <h1 className="page-title">Back-office</h1>
       <nav aria-label="Sections admin" className="mt-6 flex flex-wrap gap-2">
         {TABS.map((t) => (
-          <Link key={t.key} href={`/admin?tab=${t.key}`} className={`rounded-xl px-4 py-2.5 text-sm font-bold no-underline hover:no-underline ${tab === t.key ? "bg-forest text-white" : "border border-line bg-white text-ink hover:border-field"}`}>
+          <Link key={t.key} href={`/admin?tab=${t.key}`} className={`rounded-xl px-4 py-2.5 text-sm font-bold no-underline hover:no-underline ${tab === t.key ? "bg-night text-white" : "border border-line bg-white text-ink hover:border-field"}`}>
             {t.label}
             {counts[t.key] ? ` (${counts[t.key]})` : ""}
           </Link>
