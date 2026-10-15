@@ -35,7 +35,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   if (sp.ville) query = query.eq("city", sp.ville);
   if (!recruiters) {
-    if (q) query = query.ilike("candidate_details.job_title", `%${q}%`);
+    if (q) {
+      // Recherche tolérante : sans accents ni majuscules, et par ressemblance (« electricein » → Électricien)
+      const { data: ids, error: searchError } = await supabase.rpc("search_talents", { q });
+      if (searchError) query = query.ilike("candidate_details.job_title", `%${q}%`);
+      else query = query.in("id", ((ids ?? []) as string[]).length ? (ids as string[]) : ["00000000-0000-0000-0000-000000000000"]);
+    }
     if (sp.contrat) query = query.contains("candidate_details.contract_types", [sp.contrat]);
     if (sp.dispo === "1") query = query.neq("candidate_details.availability", "employed");
   } else if (q) {
@@ -215,8 +220,8 @@ function Showcase({ cards }: { cards: Card[] }) {
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-lift ring-4 ring-night">
             <Portrait id={c.id} src={c.photo} alt="" sizes="210px" priority />
             <div className="absolute inset-x-2 bottom-2 rounded-xl bg-white/95 px-3 py-2 text-ink">
-              <p className="truncate text-sm font-bold">{c.name}</p>
-              <p className="truncate text-xs text-muted">{c.title}</p>
+              <p className="truncate text-sm font-bold">{c.title}</p>
+              <p className="truncate text-xs text-muted">{c.name}</p>
             </div>
           </div>
         </div>
