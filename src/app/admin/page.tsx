@@ -42,12 +42,25 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const q = params.q;
   const supabase = await createClient();
 
-  const [checks, { count: nProfiles }, { count: nPayments }, { count: nReports }] = await Promise.all([
+  const head = { count: "exact" as const, head: true };
+  const [checks, { count: nProfiles }, { count: nPayments }, { count: nReports }, { count: nCand }, { count: nRec }, { count: nPro }, { count: nOffers }] = await Promise.all([
     setupChecks(),
     supabase.from("profiles").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("upgrade_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    supabase.from("profiles").select("id", head).eq("role", "candidate").eq("status", "approved"),
+    supabase.from("profiles").select("id", head).eq("role", "recruiter").eq("status", "approved"),
+    supabase.from("profiles").select("id", head).eq("plan", "pro").or(`plan_expires_at.is.null,plan_expires_at.gt.${new Date().toISOString()}`),
+    supabase.from("offers").select("id", head).eq("status", "open").gt("expires_at", new Date().toISOString()),
   ]);
+  const stats = [
+    { label: "Candidats en ligne", value: nCand ?? 0 },
+    { label: "Recruteurs en ligne", value: nRec ?? 0 },
+    { label: "Comptes Pro actifs", value: nPro ?? 0 },
+    { label: "Offres ouvertes", value: nOffers ?? 0 },
+    { label: "Profils à valider", value: nProfiles ?? 0, href: "/admin?tab=profils", alert: true },
+    { label: "Paiements à vérifier", value: nPayments ?? 0, href: "/admin?tab=paiements", alert: true },
+  ];
   const missing = checks.filter((c) => !c.optional && !c.ok).length;
   // Tant que l'essentiel n'est pas réglé, le back-office s'ouvre sur « Mise en service »
   const tab = params.tab ?? (missing ? "demarrage" : "profils");
@@ -56,6 +69,22 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   return (
     <main className="container-page py-12">
       <h1 className="page-title">Back-office</h1>
+      <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6" aria-label="Chiffres clés">
+        {stats.map((k) => {
+          const urgent = k.alert && k.value > 0;
+          const body = (
+            <>
+              <span className={`block font-display text-3xl font-bold tabular-nums ${urgent ? "text-aloa-pink" : "text-ink"}`}>{k.value}</span>
+              <span className="mt-1 block text-[13px] font-semibold text-muted">{k.label}</span>
+            </>
+          );
+          return (
+            <li key={k.label} className={`card p-4 ${urgent ? "ring-2 ring-aloa-pink/30" : ""}`}>
+              {k.href ? <Link href={k.href} className="block no-underline hover:no-underline">{body}</Link> : body}
+            </li>
+          );
+        })}
+      </ul>
       <nav aria-label="Sections admin" className="mt-6 flex flex-wrap gap-2">
         {TABS.map((t) => (
           <Link key={t.key} href={`/admin?tab=${t.key}`} className={`rounded-xl px-4 py-2.5 text-sm font-bold no-underline hover:no-underline ${tab === t.key ? "bg-night text-white" : "border border-line bg-white text-ink hover:border-field"}`}>
