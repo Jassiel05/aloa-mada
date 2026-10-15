@@ -6,7 +6,7 @@ import { signIn } from "@/app/actions/auth";
 export default function SignInForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState(signIn, undefined);
   return (
-    <form action={action} className="mt-8 flex flex-col gap-5">
+    <form action={action} className="mt-6 flex flex-col gap-5">
       <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="email" className="label">Email</label>

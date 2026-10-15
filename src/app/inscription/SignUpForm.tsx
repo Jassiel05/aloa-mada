@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { signUp } from "@/app/actions/auth";
+import OAuthButtons from "@/components/OAuthButtons";
+import type { OAuthProvider } from "@/lib/oauth";
 
 const ROLES = [
   { value: "candidate", title: "Je cherche du travail", text: "Emploi, mission ou extra : je présente mon profil aux recruteurs." },
   { value: "recruiter", title: "Je recrute", text: "Entreprise ou particulier, je cherche la bonne personne." },
 ];
 
-export default function SignUpForm() {
+export default function SignUpForm({ providers }: { providers: OAuthProvider[] }) {
   const [state, action, pending] = useActionState(signUp, undefined);
   const [role, setRole] = useState("candidate");
 
@@ -18,7 +20,7 @@ export default function SignUpForm() {
   }
 
   return (
-    <form action={action} className="mt-8 flex flex-col gap-5">
+    <div className="mt-8 flex flex-col gap-6">
       <fieldset>
         <legend className="label mb-2">Vous êtes</legend>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -29,7 +31,7 @@ export default function SignUpForm() {
             >
               <input
                 type="radio"
-                name="role"
+                name="role-choice"
                 value={r.value}
                 checked={role === r.value}
                 onChange={() => setRole(r.value)}
@@ -42,29 +44,40 @@ export default function SignUpForm() {
           ))}
         </div>
       </fieldset>
-      <div>
-        <label htmlFor="first_name" className="label">Prénom</label>
-        <input id="first_name" name="first_name" required autoComplete="given-name" className="field" />
-      </div>
-      <div>
-        <label htmlFor="email" className="label">Email</label>
-        <input id="email" name="email" type="email" required autoComplete="email" className="field" />
-      </div>
-      <div>
-        <label htmlFor="password" className="label">Mot de passe</label>
-        <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" aria-describedby="password-hint" className="field" />
-        <p id="password-hint" className="mt-1.5 text-[13px] text-muted">8 caractères minimum.</p>
-      </div>
-      <label className="flex items-start gap-3 text-sm">
-        <input type="checkbox" name="terms" required className="mt-1 size-4 accent-brand" />
-        <span>
-          J&apos;accepte les <Link href="/cgu">CGU</Link> et la <Link href="/confidentialite">politique de confidentialité</Link>.
-        </span>
-      </label>
-      {state?.error && <p role="alert" className="text-sm font-semibold text-danger">{state.error}</p>}
-      <button type="submit" disabled={pending} className="btn-primary min-h-12 text-base">
-        {pending ? "Création du compte…" : "Créer mon compte"}
-      </button>
-    </form>
+
+      <OAuthButtons providers={providers} role={role} next="/onboarding" />
+
+      <form action={action} className="flex flex-col gap-5">
+        <input type="hidden" name="role" value={role} />
+        <div>
+          <label htmlFor="first_name" className="label">Prénom</label>
+          <input id="first_name" name="first_name" required autoComplete="given-name" className="field" />
+        </div>
+        <div>
+          <label htmlFor="email" className="label">Email</label>
+          <input id="email" name="email" type="email" required autoComplete="email" className="field" />
+        </div>
+        <div>
+          <label htmlFor="password" className="label">Mot de passe</label>
+          <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" aria-describedby="password-hint" className="field" />
+          <p id="password-hint" className="mt-1.5 text-[13px] text-muted">8 caractères minimum.</p>
+        </div>
+        <label className="flex items-start gap-3 text-sm">
+          <input type="checkbox" name="terms" required className="mt-1 size-4 accent-brand" />
+          <span>
+            J&apos;accepte les <Link href="/cgu">CGU</Link> et la <Link href="/confidentialite">politique de confidentialité</Link>.
+          </span>
+        </label>
+        {state?.error && <p role="alert" className="text-sm font-semibold text-danger">{state.error}</p>}
+        <button type="submit" disabled={pending} className="btn-primary min-h-12 text-base">
+          {pending ? "Création du compte…" : "Créer mon compte"}
+        </button>
+      </form>
+      {providers.length > 0 && (
+        <p className="text-[13px] leading-relaxed text-muted">
+          Avec Google ou Apple, vous acceptez également les <Link href="/cgu">CGU</Link> et la <Link href="/confidentialite">politique de confidentialité</Link>.
+        </p>
+      )}
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { siteUrl } from "@/lib/site";
@@ -45,6 +45,38 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (!data.session) {
     return { info: "Presque fini ! Ouvrez l'email de confirmation que nous venons d'envoyer, puis revenez vous connecter." };
   }
+  redirect("/onboarding");
+}
+
+/** Connexion ou inscription avec Google / Apple (OAuth géré par Supabase). */
+export async function signInWithProvider(formData: FormData) {
+  const provider = formData.get("provider") === "apple" ? "apple" : "google";
+  const next = safeNext(formData.get("next"));
+  const role = formData.get("role");
+
+  // Le rôle choisi à l'inscription est retrouvé au retour, dans /auth/callback
+  if (role === "recruiter" || role === "candidate") {
+    (await cookies()).set("aloa_role", role, { httpOnly: true, sameSite: "lax", secure: true, path: "/", maxAge: 600 });
+  }
+
+  const supabase = await createClient();
+  const site = (await headers()).get("origin") ?? siteUrl();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}` },
+  });
+  if (error || !data.url) redirect("/connexion?erreur=fournisseur");
+  redirect(data.url);
+}
+
+/** Avant d'avoir terminé son profil, un membre peut encore changer de rôle. */
+export async function chooseRole(role: "candidate" | "recruiter") {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/connexion");
+  await supabase.from("profiles").update({ role }).eq("id", user.id).eq("onboarded", false);
   redirect("/onboarding");
 }
 
