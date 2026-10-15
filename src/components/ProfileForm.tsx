@@ -65,7 +65,7 @@ export default function ProfileForm({ userId, role, initial, mode }: Props) {
               type="button"
               onClick={() => setStep(i)}
               aria-current={i === step ? "step" : undefined}
-              className={`w-full border-t-4 pt-2 text-left text-sm font-bold ${i <= step ? "border-laterite text-ink" : "border-line text-muted"}`}
+              className={`w-full border-t-4 pt-2 text-left text-sm font-bold ${i <= step ? "border-brand text-ink" : "border-line text-muted"}`}
             >
               {i + 1}. {s}
             </button>
@@ -271,8 +271,8 @@ export default function ProfileForm({ userId, role, initial, mode }: Props) {
         </div>
       )}
 
-      {error && <p role="alert" className="mt-6 rounded-xl bg-laterite-soft p-4 text-sm font-semibold text-laterite-dark">{error}</p>}
-      {saved && <p role="status" className="mt-6 rounded-xl bg-ravinala-soft p-4 text-sm font-semibold text-ravinala-ink">Modifications enregistrées.</p>}
+      {error && <p role="alert" className="mt-6 rounded-xl bg-danger-soft p-4 text-sm font-semibold text-danger">{error}</p>}
+      {saved && <p role="status" className="mt-6 rounded-xl bg-brand-soft p-4 text-sm font-semibold text-brand-ink">Modifications enregistrées.</p>}
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
         <button type="button" onClick={() => setStep(step - 1)} disabled={step === 0} className="btn-ghost">← Retour</button>

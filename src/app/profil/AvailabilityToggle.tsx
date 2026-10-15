@@ -19,7 +19,7 @@ export default function AvailabilityToggle({ current }: { current: Availability 
     <div className="card mt-6 flex flex-wrap items-center justify-between gap-4 p-5">
       <div>
         <p className="flex items-center gap-2 font-bold">
-          <span aria-hidden="true" className={`size-2.5 rounded-full ${employed ? "bg-employed" : "bg-ravinala"}`} />
+          <span aria-hidden="true" className={`size-2.5 rounded-full ${employed ? "bg-employed" : "bg-available"}`} />
           {employed ? "En poste" : "Disponible"}
         </p>
         <p className="mt-1 text-sm text-muted">

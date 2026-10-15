@@ -15,7 +15,7 @@ export default async function OnboardingPage() {
 
   return (
     <main className="container-page max-w-3xl py-12">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">
+      <h1 className="page-title">
         Bienvenue{viewer.profile.first_name ? `, ${viewer.profile.first_name}` : ""}
       </h1>
       <p className="mt-2 mb-10 text-muted">
