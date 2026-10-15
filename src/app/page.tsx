@@ -91,8 +91,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <p role="status" className="bg-brand-soft py-3 text-center text-sm font-semibold text-brand-ink">Votre compte a été supprimé. Merci d&apos;avoir utilisé Aloa-Mada.</p>
       )}
       {/* ---------- En-tête : recherche ---------- */}
-      <section className="relative overflow-hidden bg-forest text-white">
-        <div aria-hidden="true" className="pointer-events-none absolute -top-40 -right-40 size-[520px] rounded-full bg-brand/25 blur-3xl" />
+      <section className="relative overflow-hidden bg-night text-white">
+        <div aria-hidden="true" className="pointer-events-none absolute -top-48 -right-32 size-[560px] rounded-full bg-aloa-purple/35 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute top-1/3 -right-56 size-[440px] rounded-full bg-aloa-pink/25 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-56 left-1/4 size-[460px] rounded-full bg-aloa-cyan/15 blur-3xl" />
         <div className="container-page relative grid items-center gap-12 py-12 sm:py-16 lg:py-20 xl:grid-cols-[1.15fr_0.85fr]">
           <div className="max-w-2xl">
             <h1 className="font-display text-[40px] leading-[1.02] font-bold sm:text-[56px] lg:text-[64px]">
@@ -141,7 +143,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80">
               {["Chaque photo vérifiée avant publication", "Inscription gratuite", "Contact direct, sans intermédiaire"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
-                  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f5b82e" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7" /></svg>
+                  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fd9134" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7" /></svg>
                   {t}
                 </li>
               ))}
@@ -160,8 +162,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             {!error && (cards.length > 0 || filtered) && <p className="mt-1 text-sm text-muted">{cards.length > 0 ? countLabel : "Aucun résultat"}{filtered && <> · <Link href={recruiters ? "/?vue=recruteurs" : "/"}>Effacer les filtres</Link></>}</p>}
           </div>
           <div role="tablist" aria-label="Type de profils" className="inline-flex rounded-xl border border-line bg-white p-1 text-sm font-bold">
-            <Link role="tab" aria-selected={!recruiters} href={href({ vue: undefined, contrat: undefined, dispo: undefined })} className={`rounded-lg px-4 py-2 no-underline hover:no-underline ${!recruiters ? "bg-forest text-white" : "text-ink hover:bg-subtle"}`}>Talents</Link>
-            <Link role="tab" aria-selected={recruiters} href={href({ vue: "recruteurs", contrat: undefined, dispo: undefined })} className={`rounded-lg px-4 py-2 no-underline hover:no-underline ${recruiters ? "bg-forest text-white" : "text-ink hover:bg-subtle"}`}>Recruteurs</Link>
+            <Link role="tab" aria-selected={!recruiters} href={href({ vue: undefined, contrat: undefined, dispo: undefined })} className={`rounded-lg px-4 py-2 no-underline hover:no-underline ${!recruiters ? "bg-night text-white" : "text-ink hover:bg-subtle"}`}>Talents</Link>
+            <Link role="tab" aria-selected={recruiters} href={href({ vue: "recruteurs", contrat: undefined, dispo: undefined })} className={`rounded-lg px-4 py-2 no-underline hover:no-underline ${recruiters ? "bg-night text-white" : "text-ink hover:bg-subtle"}`}>Recruteurs</Link>
           </div>
         </div>
 
@@ -210,7 +212,7 @@ function Showcase({ cards }: { cards: Card[] }) {
     <div aria-hidden="true" className="hidden justify-center xl:flex">
       {cards.map((c, i) => (
         <div key={c.id} className={`relative w-48 flex-none xl:w-52 ${placement[i]}`}>
-          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-lift ring-4 ring-forest">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-lift ring-4 ring-night">
             <Portrait id={c.id} src={c.photo} alt="" sizes="210px" priority />
             <div className="absolute inset-x-2 bottom-2 rounded-xl bg-white/95 px-3 py-2 text-ink">
               <p className="truncate text-sm font-bold">{c.name}</p>
@@ -282,17 +284,17 @@ function HowItWorks() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         {audiences.map((a, i) => (
-          <div key={a.title} className={`rounded-2xl p-7 sm:p-9 ${i === 0 ? "bg-white ring-1 ring-line" : "bg-forest text-white"}`}>
+          <div key={a.title} className={`rounded-2xl p-7 sm:p-9 ${i === 0 ? "bg-white ring-1 ring-line" : "bg-night text-white"}`}>
             <h3 className="font-display text-[26px] leading-tight font-bold">{a.title}</h3>
             <ul className="mt-5 flex flex-col gap-3">
               {a.points.map((p) => (
                 <li key={p} className="flex gap-3">
-                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={i === 0 ? "#0e8a5f" : "#f5b82e"} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-none"><path d="M5 12l5 5L20 7" /></svg>
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={i === 0 ? "#0277c2" : "#fd9134"} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-none"><path d="M5 12l5 5L20 7" /></svg>
                   <span className={i === 0 ? "" : "text-white/85"}>{p}</span>
                 </li>
               ))}
             </ul>
-            <Link href="/inscription" className={`${i === 0 ? "btn-primary" : "btn bg-white text-forest hover:bg-white/90"} mt-7 min-h-12 px-6`}>{a.cta}</Link>
+            <Link href="/inscription" className={`${i === 0 ? "btn-primary" : "btn bg-white text-night hover:bg-white/90"} mt-7 min-h-12 px-6`}>{a.cta}</Link>
           </div>
         ))}
       </div>

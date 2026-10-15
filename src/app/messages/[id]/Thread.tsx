@@ -55,7 +55,7 @@ export default function Thread({ conversationId, me, initial }: { conversationId
         {messages.map((m) => {
           const mine = m.sender_id === me;
           return (
-            <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 ${mine ? "self-end rounded-br-md bg-forest text-white" : "self-start rounded-bl-md border border-line bg-white"}`}>
+            <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 ${mine ? "self-end rounded-br-md bg-night text-white" : "self-start rounded-bl-md border border-line bg-white"}`}>
               <p className="whitespace-pre-line">{m.body}</p>
               <p className={`mt-1 text-[11px] ${mine ? "text-white/70" : "text-muted"}`}>
                 {new Date(m.created_at).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
