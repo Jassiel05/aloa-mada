@@ -25,18 +25,30 @@ file_size_limit = "5MiB"
 # Bucket des photos portrait (déployé automatiquement par l'intégration GitHub)
 [storage.buckets.avatars]
 public = true
-file_size_limit = "3MiB"
+file_size_limit = "1MiB"
 allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+
+# CV des candidats : espace privé, compressés dans le navigateur avant l'envoi
+[storage.buckets.cvs]
+public = false
+file_size_limit = "2MiB"
+allowed_mime_types = ["application/pdf"]
 
 [auth]
 enabled = true
 # Réglages pour le développement local. En production, les URL se règlent dans
 # Supabase > Authentication > URL Configuration (voir README).
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["http://localhost:3000/auth/callback", "https://*.vercel.app/auth/callback"]
+additional_redirect_urls = ["http://localhost:3000/**", "https://aloa-mada.vercel.app/**", "https://aloa-mada.site/**"]
 jwt_expiry = 3600
 enable_signup = true
 
 [auth.email]
 enable_signup = true
 enable_confirmations = true
+
+# Email de confirmation en français : le lien mène directement sur le site (/auth/confirm)
+# et fonctionne même si l'email est ouvert sur un autre téléphone.
+[auth.email.template.confirmation]
+subject = "Confirmez votre email · Aloa-Mada"
+content_path = "./supabase/templates/confirmation.html"

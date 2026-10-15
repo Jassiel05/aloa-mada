@@ -31,19 +31,18 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (password.length < 8) return { error: "Le mot de passe doit contenir au moins 8 caractères." };
 
   const supabase = await createClient();
-  // Le lien de confirmation revient sur le domaine depuis lequel la personne s'inscrit
-  const site = (await headers()).get("origin") ?? siteUrl();
+  // Le lien de confirmation renvoie toujours sur l'adresse publique du site (jamais sur une URL d'aperçu Vercel)
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { role, first_name: firstName },
-      emailRedirectTo: `${site}/auth/callback?next=/onboarding`,
+      emailRedirectTo: `${siteUrl()}/auth/confirm`,
     },
   });
   if (error) return { error: error.message };
   if (!data.session) {
-    return { info: "Presque fini ! Ouvrez l'email de confirmation que nous venons d'envoyer, puis revenez vous connecter." };
+    return { info: `Presque fini ! Nous venons d'envoyer un email à ${email}. Cliquez sur « Confirmer mon email » : c'est tout, votre compte est activé.` };
   }
   redirect("/onboarding");
 }
@@ -84,4 +83,14 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+/** Renvoie l'email de confirmation (lien expiré ou email non reçu). */
+export async function resendConfirmation(_prev: FormState, formData: FormData): Promise<FormState> {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!email.includes("@")) return { error: "Indiquez l'email utilisé à l'inscription." };
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: `${siteUrl()}/auth/confirm` } });
+  if (error) return { error: "Envoi impossible pour le moment. Réessayez dans une minute." };
+  return { info: `Si un compte non confirmé existe pour ${email}, un nouvel email vient d'être envoyé.` };
 }
