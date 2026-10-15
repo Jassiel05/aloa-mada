@@ -13,30 +13,31 @@ export default function Gallery({ cards, initialId, viewer }: { cards: Card[]; i
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
         {cards.map((c, i) => (
-          <li key={c.id} className={i % 2 === 1 ? "mt-4" : ""}>
+          <li key={c.id}>
             <button
               type="button"
               onClick={() => setOpenId(c.id)}
               aria-label={`Voir la fiche de ${c.name}, ${c.title}${c.city ? ", " + c.city : ""}`}
-              className={`group relative block aspect-[4/5] w-full overflow-hidden rounded-2xl text-left ${c.available ? "" : "opacity-70"}`}
+              className="group relative block aspect-[4/5] w-full overflow-hidden rounded-2xl bg-subtle text-left shadow-soft transition-shadow hover:shadow-lift"
             >
               <Portrait id={c.id} src={c.photo} alt="" priority={i < 5} grayscale={!c.available} />
-              <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-bold text-ink">
-                <span aria-hidden="true" className={`size-2 rounded-full ${c.available ? "bg-ravinala" : "bg-employed"}`} />
-                <span className="hidden sm:inline">{c.availability}</span>
+              <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2 py-1 text-[11px] font-bold text-ink sm:top-3 sm:left-3 sm:px-2.5 sm:text-xs">
+                <span aria-hidden="true" className={`size-2 rounded-full ${c.available ? "bg-available" : "bg-employed"}`} />
+                <span className="max-sm:sr-only">{c.availability}</span>
               </span>
               {c.isPro && (
-                <span className="absolute top-3 left-3 rounded-full bg-laterite px-2.5 py-1 text-[11px] font-bold tracking-wider text-white">PRO</span>
+                <span className="absolute top-2.5 right-2.5 rounded-full bg-gold px-2 py-1 text-[11px] font-extrabold text-forest sm:top-3 sm:right-3">Pro</span>
               )}
-              <span className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 bg-gradient-to-b from-transparent to-ink/85 px-3 pt-12 pb-3 text-white sm:px-4 sm:pb-4">
-                <span className="font-display text-base font-semibold sm:text-xl">{c.name}</span>
-                <span className="text-xs font-semibold sm:text-sm">{c.title}</span>
-                <span className="hidden text-[13px] opacity-90 sm:block">
-                  {c.city}
-                  {c.rate ? ` · ${c.rate}` : ""}
-                </span>
+              <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-forest/55 to-forest/95 px-3 pt-16 pb-3 text-white sm:px-4 sm:pb-4">
+                <span className="font-display text-[17px] leading-tight font-bold sm:text-xl">{c.name}</span>
+                <span className="mt-0.5 truncate text-[13px] font-semibold text-white/90 sm:text-sm">{c.title}</span>
+                {(c.city || c.rate) && (
+                  <span className="mt-1 hidden truncate text-[13px] text-white/70 sm:block">
+                    {[c.city, c.rate].filter(Boolean).join(" · ")}
+                  </span>
+                )}
               </span>
             </button>
           </li>

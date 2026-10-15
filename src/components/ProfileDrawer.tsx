@@ -67,7 +67,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
         ref={ref}
         onClose={onClose}
         aria-label={`Fiche de ${card.name}`}
-        className="m-0 ml-auto h-dvh max-h-dvh w-full max-w-[480px] overflow-hidden bg-ivory p-0 text-ink backdrop:bg-ink/35"
+        className="m-0 ml-auto h-dvh max-h-dvh w-full max-w-[480px] overflow-hidden bg-white p-0 text-ink shadow-lift backdrop:bg-forest/50 backdrop:backdrop-blur-[2px]"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
@@ -75,7 +75,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
         <div className="flex h-full flex-col overflow-y-auto">
           <div className="relative aspect-[4/5] max-h-[52vh] w-full flex-none">
             <Portrait id={card.id} src={card.photo} alt={`Portrait de ${card.name}`} sizes="480px" />
-            <button type="button" onClick={onClose} aria-label="Fermer la fiche" className="absolute top-4 right-4 grid size-11 place-items-center rounded-full bg-white">
+            <button type="button" onClick={onClose} aria-label="Fermer la fiche" className="absolute top-4 right-4 grid size-11 place-items-center rounded-full bg-white text-ink shadow-soft">
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
             </button>
             {viewer && !isSelf && (
@@ -83,28 +83,28 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                 <FavoriteButton key={card.id} profileId={card.id} initial={viewer.favorites.includes(card.id)} />
               </div>
             )}
-            {card.isPro && <span className="absolute top-4 left-4 rounded-full bg-laterite px-2.5 py-1 text-[11px] font-bold tracking-wider text-white">PRO</span>}
+            {card.isPro && <span className="absolute top-4 left-4 rounded-full bg-gold px-2.5 py-1 text-xs font-extrabold text-forest">Pro</span>}
           </div>
 
           <div className="flex flex-1 flex-col gap-5 px-6 pt-7 sm:px-8">
             <div>
-              <p className="flex items-center gap-2 text-[13px] font-bold">
-                <span aria-hidden="true" className={`size-2 rounded-full ${card.available ? "bg-ravinala" : "bg-employed"}`} />
+              <p className="inline-flex items-center gap-2 rounded-full bg-subtle px-3 py-1 text-[13px] font-bold">
+                <span aria-hidden="true" className={`size-2 rounded-full ${card.available ? "bg-available" : "bg-employed"}`} />
                 {card.availabilityLong}
               </p>
-              <h2 className="mt-2 mb-1 font-display text-[34px] leading-tight font-semibold tracking-tight">{card.name}</h2>
+              <h2 className="mt-2 mb-1 font-display text-[32px] leading-tight font-bold">{card.name}</h2>
               <p className="font-semibold text-muted">
                 {card.title}
-                {card.city ? ` · ${card.city}` : ""}
-                {card.verified && <span className="ml-2 rounded-full bg-ravinala-soft px-2 py-0.5 text-xs text-ravinala-ink">Entreprise vérifiée</span>}
+                {card.city ? `, ${card.city}` : ""}
+                {card.verified && <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-xs text-brand-ink">Entreprise vérifiée</span>}
               </p>
             </div>
 
             {card.headline && <p className="text-base leading-relaxed">{card.headline}</p>}
 
             {!viewer ? (
-              <div className="rounded-2xl bg-sand p-5">
-                <p className="font-semibold">Créez un compte gratuit pour voir la fiche complète et entrer en contact.</p>
+              <div className="rounded-2xl bg-brand-soft p-5">
+                <p className="font-semibold text-brand-ink">Créez votre compte gratuit pour voir la fiche complète et écrire à {card.first}.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link href="/inscription" className="btn-primary">Créer mon profil</Link>
                   <Link href={`/connexion?next=${encodeURIComponent(`/?p=${card.id}`)}`} className="btn-outline">Se connecter</Link>
@@ -114,7 +114,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
               <>
                 {card.skills.length > 0 && (
                   <ul className="flex flex-wrap gap-2" aria-label="Compétences">
-                    {card.skills.map((s) => <li key={s} className="rounded-full bg-sand px-3 py-1.5 text-[13px] font-semibold">{s}</li>)}
+                    {card.skills.map((s) => <li key={s} className="rounded-lg bg-subtle px-3 py-1.5 text-[13px] font-semibold">{s}</li>)}
                   </ul>
                 )}
                 <dl className="grid grid-cols-[130px_1fr] gap-x-4 gap-y-3 border-t border-line pt-5 text-[15px]">
@@ -148,14 +148,14 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
           </div>
 
           {viewer && !isSelf && (
-            <div className="sticky bottom-0 mt-6 border-t border-line bg-ivory px-6 pt-5 pb-7 sm:px-8">
+            <div className="sticky bottom-0 mt-6 border-t border-line bg-white/95 px-6 pt-4 pb-6 backdrop-blur sm:px-8">
               {!card.available ? (
                 <p className="text-center text-sm font-semibold text-muted">Cette personne est en poste et ne reçoit plus de nouveaux contacts.</p>
               ) : composing ? (
                 <div className="flex flex-col gap-2.5">
                   <label htmlFor="first-message" className="text-sm font-bold">Votre message à {card.first}</label>
                   <textarea id="first-message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={4000} className="field min-h-24 py-3" />
-                  {error && <p role="alert" className="text-sm font-semibold text-laterite-dark">{error}</p>}
+                  {error && <p role="alert" className="text-sm font-semibold text-danger">{error}</p>}
                   <button type="button" onClick={onSend} disabled={pending} className="btn-primary min-h-12 text-base">
                     {pending ? "Envoi…" : "Envoyer"}
                   </button>
