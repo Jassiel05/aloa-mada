@@ -41,7 +41,7 @@ export default async function FavorisPage() {
             <li key={p!.id} className="relative">
               <Link href={`/?p=${p!.id}`} className="group relative block aspect-[4/5] overflow-hidden rounded-2xl">
                 <Portrait id={p!.id} src={photoUrl(p!.photo_path)} alt="" />
-                <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-forest/55 to-forest/95 px-3 pt-12 pb-3 text-white">
+                <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-night/55 to-night/95 px-3 pt-12 pb-3 text-white">
                   <span className="font-display text-lg font-bold">{displayName(p!.first_name, p!.last_name)}</span>
                   <span className="text-xs font-semibold">{p!.candidate_details?.job_title ?? "Recruteur"}</span>
                 </span>
