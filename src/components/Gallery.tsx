@@ -28,9 +28,9 @@ export default function Gallery({ cards, initialId, viewer }: { cards: Card[]; i
                 <span className="max-sm:sr-only">{c.availability}</span>
               </span>
               {c.isPro && (
-                <span className="absolute top-2.5 right-2.5 rounded-full bg-gold px-2 py-1 text-[11px] font-extrabold text-forest sm:top-3 sm:right-3">Pro</span>
+                <span className="absolute top-2.5 right-2.5 pro-badge px-2 py-1 text-[11px] sm:top-3 sm:right-3">Pro</span>
               )}
-              <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-forest/55 to-forest/95 px-3 pt-16 pb-3 text-white sm:px-4 sm:pb-4">
+              <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-night/55 to-night/95 px-3 pt-16 pb-3 text-white sm:px-4 sm:pb-4">
                 <span className="font-display text-[17px] leading-tight font-bold sm:text-xl">{c.name}</span>
                 <span className="mt-0.5 truncate text-[13px] font-semibold text-white/90 sm:text-sm">{c.title}</span>
                 {(c.city || c.rate) && (
