@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { applyToOffer } from "@/app/actions/offers";
 import UpgradeModal from "@/components/UpgradeModal";
 
-export default function ApplyBox({ offerId, canApply, alreadyApplied, pendingProfile }: { offerId: string; canApply: boolean; alreadyApplied: boolean; pendingProfile: boolean }) {
+export default function ApplyBox({ offerId, canApply, alreadyApplied, pendingProfile, hasCv = false }: { offerId: string; canApply: boolean; alreadyApplied: boolean; pendingProfile: boolean; hasCv?: boolean }) {
   const [open, setOpen] = useState(false);
   const [upgrade, setUpgrade] = useState(false);
   const [message, setMessage] = useState("");
@@ -38,6 +39,13 @@ export default function ApplyBox({ offerId, canApply, alreadyApplied, pendingPro
         <div className="flex flex-col gap-3">
           <label htmlFor="apply-msg" className="label">Un mot pour le recruteur (facultatif)</label>
           <textarea id="apply-msg" rows={3} maxLength={1500} value={message} onChange={(e) => setMessage(e.target.value)} className="field py-3" />
+          <p className="text-[13px] text-muted">
+            {hasCv ? (
+              "Votre CV (PDF) est joint automatiquement à votre candidature."
+            ) : (
+              <>Astuce : <Link href="/profil">ajoutez votre CV</Link> à votre profil, il sera joint à vos candidatures.</>
+            )}
+          </p>
           <button type="button" onClick={send} disabled={pending} className="btn-primary min-h-12 text-base">{pending ? "Envoi…" : "Envoyer ma candidature"}</button>
         </div>
       ) : (

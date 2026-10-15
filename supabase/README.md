@@ -10,6 +10,7 @@
 | `0004` | `migrations/0004_app_settings.sql` | Paramètres réglables au back-office : prix Pro candidat / recruteur, bénéficiaire et numéros MVola, Orange Money, Airtel Money |
 | `0005` | `migrations/0005_legal_settings.sql` | Éditeur du site, adresse, NIF / STAT, email et téléphone de contact (pied de page, CGU, confidentialité) |
 | `0006` | `migrations/0006_oauth.sql` | Connexion Google / Apple : prénom et nom repris du compte Google ou Apple à la création du profil |
+| `0007` | `migrations/0007_cv_portfolio.sql` | CV des candidats (espace privé `cvs`, 2 Mo max, visible par la personne, les recruteurs, les membres Pro et l'admin) ; liens portfolio et site web limités à http(s) ; photos limitées à 1 Mo |
 
 ## Application
 
@@ -54,7 +55,7 @@ renvoie une page 404. Les prix, les numéros Mobile Money, l'éditeur et le cont
 
 ## Règles pour les prochaines migrations
 
-- Un fichier par évolution (`0007_<description>.sql`, …), sans jamais modifier une migration
+- Un fichier par évolution (`0008_<description>.sql`, …), sans jamais modifier une migration
   déjà appliquée en production.
 - **Toute nouvelle table reçoit ses `GRANT` explicites** (voir `0003`), en plus de sa RLS.
 - Écrire des scripts rejouables : `create table if not exists`, `on conflict do nothing`,

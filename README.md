@@ -13,7 +13,8 @@ Plateforme de mise en relation directe entre recruteurs et candidats à Madagasc
 | Contact | Fiche qui s'ouvre sur le côté, premier message, messagerie en temps réel (`/messages`) |
 | Offres | Publication (Recruteur Pro), candidature (Candidat Pro), suivi des candidatures des deux côtés |
 | Pro | Demande de passage en Pro par Mobile Money (référence de transaction), validation par l'admin |
-| Admin | `/admin` : validation des photos et profils, paiements, signalements, membres (plan, badge entreprise) |
+| Admin | `/admin` : page « Mise en service » (état de chaque réglage), validation des photos et profils, paiements, signalements, membres (plan, badge entreprise), paramètres |
+| CV et portfolio | CV en PDF ou photo, compressé automatiquement dans le navigateur (2 Mo max, souvent moins de 400 Ko), visible par les recruteurs et les membres Pro ; lien portfolio |
 
 ## Règles de droits (appliquées dans la base, pas seulement à l'écran)
 

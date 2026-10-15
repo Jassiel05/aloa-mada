@@ -23,7 +23,7 @@ export default async function ConfidentialitePage() {
       <h2>Données collectées</h2>
       <ul>
         <li>Compte : prénom, nom, email, mot de passe (chiffré, jamais lisible par notre équipe).</li>
-        <li>Profil : photo, ville, métier, compétences, expérience, langues, contrats recherchés, prétentions, disponibilité, présentation.</li>
+        <li>Profil : photo, ville, métier, compétences, expérience, langues, contrats recherchés, prétentions, disponibilité, présentation, lien portfolio et CV s&apos;ils sont ajoutés.</li>
         <li>Recruteurs : nom et secteur de la structure, taille, site web, NIF ou STAT s&apos;ils sont fournis.</li>
         <li>Coordonnées : téléphone et WhatsApp, s&apos;ils sont renseignés.</li>
         <li>Activité : messages échangés, candidatures, favoris, alertes, vues de profil (sans le détail des visiteurs).</li>
@@ -34,7 +34,7 @@ export default async function ConfidentialitePage() {
       <ul>
         <li>Tout le monde : portrait, prénom et initiale du nom, métier, ville, disponibilité et prétentions.</li>
         <li>Membres connectés : la fiche complète, sauf les coordonnées.</li>
-        <li>Recruteurs et candidats Pro : en plus, l&apos;email et le téléphone. Les candidats Simple et les visiteurs ne les voient jamais.</li>
+        <li>Recruteurs et candidats Pro : en plus, l&apos;email, le téléphone et le CV. Les candidats Simple et les visiteurs ne les voient jamais.</li>
         <li>Les messages sont réservés aux deux personnes de la conversation. L&apos;équipe peut les consulter uniquement pour traiter un signalement.</li>
       </ul>
 
@@ -48,13 +48,13 @@ export default async function ConfidentialitePage() {
 
       <h2>Durée de conservation</h2>
       <p>
-        Les données sont conservées tant que votre compte est actif. La suppression d&apos;un compte efface immédiatement le profil, la photo, les messages, les
+        Les données sont conservées tant que votre compte est actif. La suppression d&apos;un compte efface immédiatement le profil, la photo, le CV, les messages, les
         offres, les candidatures et l&apos;historique des demandes Pro.
       </p>
 
       <h2>Hébergement et sécurité</h2>
       <p>
-        Les données sont hébergées par Supabase (base de données et photos) et le site est servi par Vercel. Les échanges sont chiffrés (HTTPS) et
+        Les données sont hébergées par Supabase (base de données, photos et CV) et le site est servi par Vercel. Les échanges sont chiffrés (HTTPS) et
         l&apos;accès aux données est limité par des règles appliquées directement dans la base.
       </p>
 

@@ -15,7 +15,7 @@ type AppRow = {
   message: string | null;
   status: string;
   created_at: string;
-  candidate: (Profile & { candidate_details: { job_title: string | null } | null }) | null;
+  candidate: (Profile & { candidate_details: { job_title: string | null; cv_path: string | null; portfolio_url: string | null } | null }) | null;
 };
 
 const STATUS_LABEL: Record<string, string> = { sent: "Nouvelle", seen: "Vue", shortlisted: "Retenue", rejected: "Refusée" };
@@ -30,7 +30,7 @@ export default async function MesOffresPage() {
   const { data: appsData } = offers.length
     ? await supabase
         .from("applications")
-        .select("id, offer_id, message, status, created_at, candidate:profiles!applications_candidate_id_fkey(*, candidate_details(job_title))")
+        .select("id, offer_id, message, status, created_at, candidate:profiles!applications_candidate_id_fkey(*, candidate_details(job_title, cv_path, portfolio_url))")
         .in("offer_id", offers.map((o) => o.id))
         .order("created_at", { ascending: false })
     : { data: [] };
@@ -74,6 +74,14 @@ export default async function MesOffresPage() {
                           </Link>
                           <span className="ml-2 text-sm text-muted">{a.candidate?.candidate_details?.job_title}</span>
                           {a.message && <p className="mt-1 text-sm whitespace-pre-line">{a.message}</p>}
+                          {(a.candidate?.candidate_details?.cv_path || a.candidate?.candidate_details?.portfolio_url) && (
+                            <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold">
+                              {a.candidate?.candidate_details?.cv_path && <a href={`/cv/${a.candidate.id}`} target="_blank" rel="noopener">CV (PDF) ↗</a>}
+                              {a.candidate?.candidate_details?.portfolio_url?.match(/^https?:\/\//i) && (
+                                <a href={a.candidate.candidate_details.portfolio_url} target="_blank" rel="noopener noreferrer nofollow">Portfolio ↗</a>
+                              )}
+                            </p>
+                          )}
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <span className="rounded-full bg-subtle px-3 py-1 font-semibold">{STATUS_LABEL[a.status]}</span>

@@ -177,7 +177,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <Gallery
             cards={cards}
             initialId={sp.p ?? null}
-            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, favorites } : null}
+            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, seeContacts: viewer.can.seeContacts, favorites } : null}
           />
         )}
 

@@ -16,9 +16,14 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
 
   const { data: recruiter } = await supabase.from("profiles").select("*").eq("id", offer.recruiter_id).maybeSingle<Profile>();
   let alreadyApplied = false;
+  let hasCv = false;
   if (viewer?.profile.role === "candidate") {
-    const { count } = await supabase.from("applications").select("id", { count: "exact", head: true }).eq("offer_id", id).eq("candidate_id", viewer.id);
+    const [{ count }, { data: mine }] = await Promise.all([
+      supabase.from("applications").select("id", { count: "exact", head: true }).eq("offer_id", id).eq("candidate_id", viewer.id),
+      supabase.from("candidate_details").select("cv_path").eq("profile_id", viewer.id).maybeSingle(),
+    ]);
     alreadyApplied = (count ?? 0) > 0;
+    hasCv = !!mine?.cv_path;
   }
   let saved = false;
   if (viewer) {
@@ -76,7 +81,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
               </div>
             </div>
           ) : viewer.profile.role === "candidate" ? (
-            <ApplyBox offerId={offer.id} canApply={viewer.can.apply} alreadyApplied={alreadyApplied} pendingProfile={viewer.profile.status !== "approved"} />
+            <ApplyBox offerId={offer.id} canApply={viewer.can.apply} alreadyApplied={alreadyApplied} pendingProfile={viewer.profile.status !== "approved"} hasCv={hasCv} />
           ) : null}
           {viewer && <FavoriteButton offerId={offer.id} initial={saved} variant="text" />}
         </aside>

@@ -19,8 +19,8 @@ function Check({ muted = false }: { muted?: boolean }) {
   );
 }
 
-export default async function ProPage() {
-  const [viewer, settings] = await Promise.all([getViewer(), getSettings()]);
+export default async function ProPage({ searchParams }: { searchParams: Promise<{ acces?: string }> }) {
+  const [viewer, settings, { acces }] = await Promise.all([getViewer(), getSettings(), searchParams]);
   const numbers = paymentNumbers(settings);
 
   const plans = [
@@ -54,6 +54,11 @@ export default async function ProPage() {
 
   return (
     <main className="container-page py-12 sm:py-16">
+      {acces === "cv" && (
+        <p role="status" className="mb-8 max-w-2xl rounded-xl bg-brand-soft p-4 font-semibold text-brand-ink">
+          Les CV, comme l&apos;email et le téléphone, sont réservés aux recruteurs et aux membres Pro.
+        </p>
+      )}
       <div className="max-w-2xl">
         <h1 className="page-title">Tarifs simples, sans engagement</h1>
         <p className="mt-4 text-lg leading-relaxed text-muted">
