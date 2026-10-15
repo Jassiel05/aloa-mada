@@ -28,5 +28,5 @@ export async function requestUpgrade(_prev: FormState, formData: FormData): Prom
   });
   if (error) return { error: error.message };
   revalidatePath("/pro");
-  return { info: "Demande reçue ! Nous vérifions le paiement et activons votre compte Pro, en général sous quelques heures." };
+  return { info: "Demande envoyée. Nous vérifions votre paiement et vous prévenons par email dès que votre compte Pro est activé." };
 }

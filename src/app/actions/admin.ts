@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { notifyProActivated, notifyProfileStatus, runTalentAlerts } from "@/lib/notify";
+import { deleteAccount } from "@/lib/account";
 
 async function adminClient() {
   const supabase = await createClient();
@@ -100,10 +101,23 @@ export async function saveSettings(_prev: { error?: string; info?: string } | un
       mvola_number: text("mvola_number"),
       orange_number: text("orange_number"),
       airtel_number: text("airtel_number"),
+      publisher_name: text("publisher_name"),
+      publisher_address: text("publisher_address"),
+      publisher_ids: text("publisher_ids"),
+      contact_email: text("contact_email"),
+      contact_phone: text("contact_phone"),
     })
     .eq("id", true);
   if (error) return { error: error.message };
-  revalidatePath("/pro");
+  revalidatePath("/", "layout");
+  return { info: "Paramètres enregistrés. Le site est à jour." };
+}
+
+/** Suppression définitive d'un membre (demande de suppression, faux compte). */
+export async function deleteMember(id: string, formData: FormData) {
+  await adminClient();
+  if (String(formData.get("confirm") ?? "") !== "oui") return;
+  await deleteAccount(id);
   revalidatePath("/admin");
-  return { info: "Paramètres enregistrés. La page Tarifs est à jour." };
+  revalidatePath("/");
 }

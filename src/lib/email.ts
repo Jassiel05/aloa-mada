@@ -11,16 +11,16 @@ export function escapeHtml(s: string) {
 /** Gabarit simple aux couleurs du site. `body` doit déjà être échappé. */
 export function emailLayout(title: string, body: string, cta?: { href: string; label: string }) {
   const button = cta
-    ? `<p style="margin:28px 0 0"><a href="${cta.href}" style="display:inline-block;background:#C2410C;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:999px">${escapeHtml(cta.label)}</a></p>`
+    ? `<p style="margin:28px 0 0"><a href="${cta.href}" style="display:inline-block;background:#0E8A5F;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:12px">${escapeHtml(cta.label)}</a></p>`
     : "";
-  return `<!doctype html><html lang="fr"><body style="margin:0;background:#FAF7F2;font-family:Arial,Helvetica,sans-serif;color:#1C1917">
+  return `<!doctype html><html lang="fr"><body style="margin:0;background:#F4F6F5;font-family:Arial,Helvetica,sans-serif;color:#13201B">
 <div style="max-width:520px;margin:0 auto;padding:32px 24px">
-<p style="font-family:Georgia,serif;font-size:24px;font-weight:600;margin:0 0 24px">aloa<span style="color:#C2410C">·</span>mada</p>
-<div style="background:#ffffff;border:1px solid #E7E1D8;border-radius:16px;padding:28px">
-<h1 style="font-family:Georgia,serif;font-size:24px;line-height:1.2;margin:0 0 16px">${escapeHtml(title)}</h1>
+<p style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#0D2B22;margin:0 0 24px"><span style="display:inline-block;width:12px;height:12px;border-radius:4px;background:#0E8A5F;margin-right:8px"></span>aloa-mada</p>
+<div style="background:#ffffff;border:1px solid #E1E7E3;border-radius:16px;padding:28px">
+<h1 style="font-size:22px;line-height:1.25;margin:0 0 16px;color:#0D2B22">${escapeHtml(title)}</h1>
 <div style="font-size:15px;line-height:1.6">${body}</div>${button}
 </div>
-<p style="font-size:12px;color:#57524C;margin:20px 4px 0">Vous recevez cet email car vous avez un compte sur Aloa-Mada. <a href="${SITE_URL}/alertes" style="color:#57524C">Gérer mes alertes</a></p>
+<p style="font-size:12px;color:#586660;margin:20px 4px 0">Vous recevez cet email car vous avez un compte sur Aloa-Mada. <a href="${SITE_URL}/alertes" style="color:#586660">Gérer mes alertes</a></p>
 </div></body></html>`;
 }
 

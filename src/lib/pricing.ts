@@ -1,7 +1,8 @@
+import { cache } from "react";
 import { createClient } from "./supabase/server";
 
 /**
- * Prix des abonnements Pro et numéros Mobile Money de réception.
+ * Prix des abonnements Pro, numéros Mobile Money de réception, éditeur et contact du site.
  * Ils se règlent dans /admin › Paramètres (table app_settings) : rien à modifier dans le code.
  */
 
@@ -20,6 +21,11 @@ export interface AppSettings {
   mvola_number: string | null;
   orange_number: string | null;
   airtel_number: string | null;
+  publisher_name: string | null;
+  publisher_address: string | null;
+  publisher_ids: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
 }
 
 const EMPTY: AppSettings = {
@@ -29,13 +35,18 @@ const EMPTY: AppSettings = {
   mvola_number: null,
   orange_number: null,
   airtel_number: null,
+  publisher_name: null,
+  publisher_address: null,
+  publisher_ids: null,
+  contact_email: null,
+  contact_phone: null,
 };
 
-export async function getSettings(): Promise<AppSettings> {
+export const getSettings = cache(async (): Promise<AppSettings> => {
   const supabase = await createClient();
   const { data } = await supabase.from("app_settings").select("*").eq("id", true).maybeSingle();
   return { ...EMPTY, ...(data ?? {}) };
-}
+});
 
 /** Numéros renseignés au back-office, dans l'ordre MVola, Orange Money, Airtel Money. */
 export function paymentNumbers(s: AppSettings) {

@@ -7,7 +7,7 @@ import { SUPABASE_URL } from "./env";
  * Sert aux notifications : retrouver l'email d'un destinataire, chercher les alertes correspondantes.
  */
 export function createAdminClient() {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
   if (!key) return null;
   return createClient(SUPABASE_URL, key, {
     auth: { persistSession: false, autoRefreshToken: false },
