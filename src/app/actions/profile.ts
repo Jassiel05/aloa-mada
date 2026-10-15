@@ -10,6 +10,9 @@ export interface ProfileInput {
   city: string;
   headline: string;
   photo_path: string | null;
+  /** La photo reste visible par l'équipe pour la vérification, mais une silhouette s'affiche au public */
+  photo_hidden: boolean;
+  gender: "homme" | "femme" | "";
   phone: string;
   whatsapp: string;
   /** Lecture seule : CV déjà enregistré (géré par saveCv / removeCv) */
@@ -66,7 +69,10 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
 
   if (submit) {
     if (!clean(input.first_name) || !clean(input.city)) return { error: "Prénom et ville sont obligatoires." };
-    if (!input.photo_path) return { error: "Ajoutez une photo portrait : c'est elle qui vous présente dans la galerie." };
+    if (!input.photo_path && !input.photo_hidden) {
+      return { error: "Ajoutez une photo portrait, ou cochez « Ne pas afficher ma photo » pour apparaître avec une silhouette." };
+    }
+    if (input.photo_hidden && !input.gender) return { error: "Choisissez Homme ou Femme : la silhouette affichée à la place de votre photo en dépend." };
     if (input.candidate && !clean(input.candidate.job_title)) return { error: "Indiquez votre métier." };
     if (input.candidate && input.candidate.contract_types.length === 0) return { error: "Choisissez au moins un type de collaboration." };
   }
@@ -87,6 +93,8 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
       city: clean(input.city),
       headline: clean(input.headline)?.slice(0, 160) ?? null,
       photo_path: input.photo_path,
+      photo_hidden: !!input.photo_hidden,
+      gender: input.gender === "homme" || input.gender === "femme" ? input.gender : null,
       ...(submit ? { onboarded: true } : {}),
       ...(nextStatus ? { status: nextStatus } : {}),
     })

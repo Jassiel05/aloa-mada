@@ -74,7 +74,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
       >
         <div className="flex h-full flex-col overflow-y-auto">
           <div className="relative aspect-[4/5] max-h-[52vh] w-full flex-none">
-            <Portrait id={card.id} src={card.photo} alt={`Portrait de ${card.name}`} sizes="480px" />
+            <Portrait id={card.id} src={card.photo} gender={card.gender} alt={card.photo ? `Portrait de ${card.name}` : ""} sizes="480px" />
             <button type="button" onClick={onClose} aria-label="Fermer la fiche" className="absolute top-4 right-4 grid size-11 place-items-center rounded-full bg-white text-ink shadow-soft">
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
             </button>
@@ -92,10 +92,10 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                 <span aria-hidden="true" className={`size-2 rounded-full ${card.available ? "bg-available" : "bg-employed"}`} />
                 {card.availabilityLong}
               </p>
-              <h2 className="mt-2 mb-1 font-display text-[32px] leading-tight font-bold">{card.name}</h2>
+              <h2 className="mt-2 mb-1 font-display text-[30px] leading-tight font-bold">{card.title}</h2>
               <p className="font-semibold text-muted">
-                {card.title}
-                {card.city ? `, ${card.city}` : ""}
+                {card.name}
+                {card.city ? ` · ${card.city}` : ""}
                 {card.verified && <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-xs text-brand-ink">Entreprise vérifiée</span>}
               </p>
             </div>
