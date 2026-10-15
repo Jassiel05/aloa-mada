@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { saveProfile, type ProfileInput } from "@/app/actions/profile";
 import { CITIES, CONTRACTS, LANGUAGES, RATE_UNITS, WORK_MODES } from "@/lib/labels";
 import PhotoUpload from "./PhotoUpload";
+import CvUpload from "./CvUpload";
 
 type Props = {
   userId: string;
@@ -151,6 +152,24 @@ export default function ProfileForm({ userId, role, initial, mode }: Props) {
             <label htmlFor="bio" className="label">Présentation (facultatif)</label>
             <textarea id="bio" rows={4} maxLength={1200} className="field py-3" value={c.bio} onChange={(e) => setC({ bio: e.target.value })} />
           </div>
+          <fieldset className="flex flex-col gap-4 border-t border-line pt-6">
+            <legend className="sr-only">CV et portfolio</legend>
+            <p className="font-display text-xl font-bold">CV et portfolio</p>
+            <CvUpload userId={userId} initial={v.cv ?? null} />
+            <div>
+              <label htmlFor="portfolio" className="label">Lien portfolio ou réalisations (facultatif)</label>
+              <input
+                id="portfolio"
+                type="url"
+                inputMode="url"
+                className="field"
+                placeholder="https://behance.net/votre-nom, LinkedIn, GitHub, Google Drive…"
+                value={c.portfolio_url}
+                onChange={(e) => setC({ portfolio_url: e.target.value })}
+              />
+              <p className="mt-1.5 text-[13px] text-muted">Photos de chantiers, créations, site, profil LinkedIn : tout ce qui montre votre travail.</p>
+            </div>
+          </fieldset>
         </div>
       )}
 
@@ -172,12 +191,6 @@ export default function ProfileForm({ userId, role, initial, mode }: Props) {
             <div>
               <label htmlFor="notice" className="label">Préavis</label>
               <input id="notice" className="field" placeholder="ex. 1 mois, immédiat" value={c.notice_period} onChange={(e) => setC({ notice_period: e.target.value })} />
-            </div>
-          )}
-          {c.contract_types.includes("freelance") && (
-            <div>
-              <label htmlFor="portfolio" className="label">Lien portfolio</label>
-              <input id="portfolio" type="url" className="field" placeholder="https://" value={c.portfolio_url} onChange={(e) => setC({ portfolio_url: e.target.value })} />
             </div>
           )}
           {c.contract_types.includes("internship") && (
@@ -256,7 +269,7 @@ export default function ProfileForm({ userId, role, initial, mode }: Props) {
               </div>
               <div>
                 <label htmlFor="website" className="label">Site web</label>
-                <input id="website" type="url" className="field" placeholder="https://" value={r.website} onChange={(e) => setR({ website: e.target.value })} />
+                <input id="website" type="url" inputMode="url" className="field" placeholder="https://" value={r.website} onChange={(e) => setR({ website: e.target.value })} />
               </div>
               <div className="sm:col-span-2">
                 <label htmlFor="nif" className="label">NIF / STAT (facultatif, pour le badge « Entreprise vérifiée »)</label>

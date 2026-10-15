@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/viewer";
 import { getSettings } from "@/lib/pricing";
 import SettingsForm from "./SettingsForm";
+import Setup, { setupChecks } from "./Setup";
 import { displayName, photoUrl } from "@/lib/labels";
 import type { ProfileWithDetails } from "@/lib/types";
 import Portrait from "@/components/Portrait";
@@ -23,6 +24,7 @@ import {
 export const metadata: Metadata = { title: "Back-office", robots: { index: false } };
 
 const TABS = [
+  { key: "demarrage", label: "Mise en service" },
   { key: "profils", label: "Profils à valider" },
   { key: "paiements", label: "Paiements" },
   { key: "signalements", label: "Signalements" },
@@ -36,15 +38,20 @@ type Report = { id: string; reason: string; created_at: string; target_profile_i
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ tab?: string; q?: string }> }) {
   const viewer = await getViewer();
   if (!viewer?.isAdmin) notFound();
-  const { tab = "profils", q } = await searchParams;
+  const params = await searchParams;
+  const q = params.q;
   const supabase = await createClient();
 
-  const [{ count: nProfiles }, { count: nPayments }, { count: nReports }] = await Promise.all([
+  const [checks, { count: nProfiles }, { count: nPayments }, { count: nReports }] = await Promise.all([
+    setupChecks(),
     supabase.from("profiles").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("upgrade_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "pending"),
   ]);
-  const counts: Record<string, number | null> = { profils: nProfiles, paiements: nPayments, signalements: nReports, membres: null, parametres: null };
+  const missing = checks.filter((c) => !c.optional && !c.ok).length;
+  // Tant que l'essentiel n'est pas réglé, le back-office s'ouvre sur « Mise en service »
+  const tab = params.tab ?? (missing ? "demarrage" : "profils");
+  const counts: Record<string, number | null> = { demarrage: missing, profils: nProfiles, paiements: nPayments, signalements: nReports, membres: null, parametres: null };
 
   return (
     <main className="container-page py-12">
@@ -58,6 +65,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         ))}
       </nav>
       <div className="mt-8">
+        {tab === "demarrage" && <Setup checks={checks} />}
         {tab === "profils" && <PendingProfiles />}
         {tab === "paiements" && <Payments />}
         {tab === "signalements" && <Reports />}

@@ -135,8 +135,21 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                     <p className="mt-1 leading-relaxed whitespace-pre-line">{card.lookingFor}</p>
                   </div>
                 )}
-                {card.portfolio && (
-                  <a href={card.portfolio} target="_blank" rel="noopener noreferrer nofollow" className="font-bold">Voir le portfolio ↗</a>
+                {(card.portfolio || card.hasCv) && (
+                  <div className="flex flex-wrap gap-2">
+                    {card.hasCv && (viewer.seeContacts || isSelf) && (
+                      <a href={`/cv/${card.id}`} target="_blank" rel="noopener" className="btn-outline min-h-10">
+                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /></svg>
+                        Voir le CV (PDF)
+                      </a>
+                    )}
+                    {card.portfolio && (
+                      <a href={card.portfolio} target="_blank" rel="noopener noreferrer nofollow" className="btn-outline min-h-10">Voir le portfolio ↗</a>
+                    )}
+                    {card.hasCv && !viewer.seeContacts && !isSelf && (
+                      <button type="button" onClick={() => setUpgrade("contact")} className="btn-ghost min-h-10">CV réservé aux membres Pro</button>
+                    )}
+                  </div>
                 )}
                 {!isSelf && (
                   <button type="button" onClick={onReport} disabled={reported || pending} className="self-start text-sm text-muted underline">
