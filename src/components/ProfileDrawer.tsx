@@ -67,7 +67,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
         ref={ref}
         onClose={onClose}
         aria-label={`Fiche de ${card.name}`}
-        className="m-0 ml-auto h-dvh max-h-dvh w-full max-w-[480px] overflow-hidden bg-white p-0 text-ink shadow-lift backdrop:bg-forest/50 backdrop:backdrop-blur-[2px]"
+        className="m-0 ml-auto h-dvh max-h-dvh w-full max-w-[480px] overflow-hidden bg-white p-0 text-ink shadow-lift backdrop:bg-night/50 backdrop:backdrop-blur-[2px]"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
@@ -83,7 +83,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                 <FavoriteButton key={card.id} profileId={card.id} initial={viewer.favorites.includes(card.id)} />
               </div>
             )}
-            {card.isPro && <span className="absolute top-4 left-4 rounded-full bg-gold px-2.5 py-1 text-xs font-extrabold text-forest">Pro</span>}
+            {card.isPro && <span className="absolute top-4 left-4 pro-badge px-2.5 py-1 text-xs">Pro</span>}
           </div>
 
           <div className="flex flex-1 flex-col gap-5 px-6 pt-7 sm:px-8">

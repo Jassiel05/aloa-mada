@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 function Check({ muted = false }: { muted?: boolean }) {
   return (
-    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={muted ? "#586660" : "#0e8a5f"} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-none">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={muted ? "#5d6075" : "#0277c2"} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-none">
       <path d="M5 12l5 5L20 7" />
     </svg>
   );
@@ -78,7 +78,7 @@ export default async function ProPage() {
               </div>
               <div className="border-t border-line bg-brand-soft/60 p-7 sm:border-t-0 sm:border-l sm:p-8">
                 <p className="flex items-center gap-2 text-sm font-bold text-brand-ink">
-                  Pro <span className="rounded-full bg-gold px-2 py-0.5 text-[11px] font-extrabold text-forest">Recommandé</span>
+                  Pro <span className="pro-badge px-2 py-0.5 text-[11px]">Recommandé</span>
                 </p>
                 <p className="mt-1 font-display text-3xl font-bold">
                   {p.price != null ? <>{new Intl.NumberFormat("fr-FR").format(p.price)} Ar<span className="text-base font-semibold text-muted"> / mois</span></> : <span className="text-xl">Prix bientôt disponible</span>}
@@ -125,7 +125,7 @@ export default async function ProPage() {
                 <div className="card p-6 sm:p-8">
                   <ol className="flex flex-col gap-6">
                     <li className="flex gap-4">
-                      <span className="grid size-8 flex-none place-items-center rounded-lg bg-forest text-sm font-bold text-white">1</span>
+                      <span className="grid size-8 flex-none place-items-center rounded-lg bg-night text-sm font-bold text-white">1</span>
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold">
                           Envoyez {priceLabel(myPrice)} par mois souhaité{settings.payee_name ? <>, au nom de <strong>{settings.payee_name}</strong></> : ""}.
@@ -141,7 +141,7 @@ export default async function ProPage() {
                       </div>
                     </li>
                     <li className="flex gap-4">
-                      <span className="grid size-8 flex-none place-items-center rounded-lg bg-forest text-sm font-bold text-white">2</span>
+                      <span className="grid size-8 flex-none place-items-center rounded-lg bg-night text-sm font-bold text-white">2</span>
                       <p className="font-semibold">Recopiez la référence de la transaction reçue par SMS dans le formulaire ci-dessous.</p>
                     </li>
                   </ol>
