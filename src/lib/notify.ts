@@ -53,7 +53,7 @@ export function notifyNewMessage(conversationId: string, senderId: string, body:
       `${from} vous a écrit sur Aloa-Mada`,
       emailLayout(
         `${from} vous a écrit`,
-        `<p style="margin:0;padding:16px;background:#EFE8DE;border-radius:12px;white-space:pre-line">${escapeHtml(excerpt)}</p>`,
+        `<p style="margin:0;padding:16px;background:#EAEFEC;border-radius:12px;white-space:pre-line">${escapeHtml(excerpt)}</p>`,
         { href: `${SITE_URL}/messages/${conversationId}`, label: "Répondre" },
       ),
     );

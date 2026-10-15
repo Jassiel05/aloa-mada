@@ -35,11 +35,11 @@ export default function UpdateBanner() {
 
   if (!available || dismissed) return null;
   return (
-    <div role="status" className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-xl flex-wrap items-center justify-between gap-3 rounded-2xl bg-ink px-5 py-4 text-white shadow-lg">
+    <div role="status" className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-xl flex-wrap items-center justify-between gap-3 rounded-2xl bg-forest px-5 py-4 text-white shadow-lift">
       <p className="text-sm font-semibold">Une nouvelle version d&apos;Aloa-Mada est disponible.</p>
       <div className="flex gap-2">
         <button type="button" onClick={() => setDismissed(true)} className="btn min-h-10 text-white/80 underline">Plus tard</button>
-        <button type="button" onClick={() => window.location.reload()} className="btn min-h-10 bg-laterite text-white hover:bg-laterite-dark">Mettre à jour</button>
+        <button type="button" onClick={() => window.location.reload()} className="btn min-h-10 bg-brand text-white hover:bg-brand-dark">Mettre à jour</button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import "@fontsource-variable/fraunces";
+import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/manrope";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -9,17 +9,19 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: "Aloa-Mada — des visages, pas des CV", template: "%s · Aloa-Mada" },
+  title: { default: "Aloa-Mada · Recrutement direct à Madagascar", template: "%s · Aloa-Mada" },
   description:
-    "Recrutement direct à Madagascar : parcourez les talents disponibles, ouvrez une fiche, envoyez un message.",
+    "Électriciens, comptables, chauffeurs, développeurs… Parcourez des profils avec photo vérifiée et écrivez directement à la personne. Inscription gratuite.",
   openGraph: {
     type: "website",
     locale: "fr_MG",
     siteName: "Aloa-Mada",
-    title: "Aloa-Mada — des visages, pas des CV",
-    description: "Recrutement direct à Madagascar : talents, recruteurs et offres, en contact en deux clics.",
+    title: "Aloa-Mada · Les talents de Madagascar, à visage découvert",
+    description: "Recrutement direct à Madagascar : profils avec photo vérifiée, offres d'emploi et contact en deux clics.",
   },
 };
+
+export const viewport: Viewport = { themeColor: "#0d2b22" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

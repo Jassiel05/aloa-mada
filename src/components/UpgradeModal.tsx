@@ -37,20 +37,20 @@ export default function UpgradeModal({ kind, onClose }: { kind: UpgradeKind | nu
       ref={ref}
       onClose={onClose}
       aria-labelledby="upgrade-title"
-      className="m-auto w-[min(440px,calc(100%-32px))] rounded-3xl bg-white p-0 backdrop:bg-ink/50"
+      className="m-auto w-[min(440px,calc(100%-32px))] rounded-3xl bg-white p-0 shadow-lift backdrop:bg-forest/60 backdrop:backdrop-blur-sm"
     >
       <div className="flex flex-col gap-4 px-8 pt-9 pb-6 text-center">
-        <div className="mx-auto grid size-14 place-items-center rounded-full bg-laterite-soft">
-          <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="mx-auto grid size-14 place-items-center rounded-full bg-gold-soft">
+          <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D2B22" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="5" y="11" width="14" height="10" rx="2" />
             <path d="M8 11V8a4 4 0 0 1 8 0v3" />
           </svg>
         </div>
-        <h2 id="upgrade-title" className="font-display text-[28px] leading-tight font-semibold">{c.title}</h2>
+        <h2 id="upgrade-title" className="font-display text-[28px] leading-tight font-bold">{c.title}</h2>
         <ul className="flex flex-col gap-2.5 text-left text-[15px]">
           {c.perks.map((p) => (
             <li key={p} className="flex gap-2.5">
-              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3F6B4E" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="mt-px flex-none">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E8A5F" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="mt-px flex-none">
                 <path d="M5 12l5 5L20 7" />
               </svg>
               {p}

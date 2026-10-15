@@ -57,7 +57,7 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
       <button
         type="button"
         onClick={() => input.current?.click()}
-        className="relative aspect-[4/5] w-full max-w-[180px] overflow-hidden rounded-2xl border-2 border-dashed border-field bg-sand"
+        className="relative aspect-[4/5] w-full max-w-[180px] overflow-hidden rounded-2xl border-2 border-dashed border-field bg-subtle"
         aria-label={url ? "Changer la photo" : "Ajouter une photo portrait"}
       >
         {url ? (
@@ -80,7 +80,7 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
         <button type="button" onClick={() => input.current?.click()} disabled={busy} className="btn-outline mt-3">
           {busy ? "Envoi…" : url ? "Changer la photo" : "Choisir une photo"}
         </button>
-        {error && <p role="alert" className="mt-2 font-semibold text-laterite-dark">{error}</p>}
+        {error && <p role="alert" className="mt-2 font-semibold text-danger">{error}</p>}
       </div>
     </div>
   );

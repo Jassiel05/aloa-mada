@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const TONES = ["#E6D9CA", "#D9CEC0", "#E3D3C3", "#D4CABE", "#E8DCD0", "#DCCFC0"];
+const TONES = ["#DCE5E0", "#D3DDD8", "#E1E6E3", "#CFD9D4", "#DAE2DE", "#D6DFDA"];
 
 function toneFor(id: string) {
   let h = 0;
