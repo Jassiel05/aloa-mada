@@ -37,6 +37,9 @@ export interface CandidateDetails {
   portfolio_url: string | null;
   notice_period: string | null;
   school: string | null;
+  cv_path: string | null;
+  cv_size: number | null;
+  cv_updated_at: string | null;
 }
 
 export interface RecruiterDetails {

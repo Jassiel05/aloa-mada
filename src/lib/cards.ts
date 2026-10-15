@@ -23,6 +23,7 @@ export interface Card {
   skills: string[];
   bio: string | null;
   portfolio: string | null;
+  hasCv: boolean;
   company: string | null;
   verified: boolean;
   lookingFor: string | null;
@@ -55,7 +56,8 @@ export function toCard(p: ProfileWithDetails, contacts?: Contacts): Card {
     languages: c?.languages ?? [],
     skills: c?.skills ?? [],
     bio: c?.bio ?? null,
-    portfolio: c?.portfolio_url ?? null,
+    portfolio: c?.portfolio_url && /^https?:\/\//i.test(c.portfolio_url) ? c.portfolio_url : null,
+    hasCv: !!c?.cv_path,
     company,
     verified: r?.verified ?? false,
     lookingFor: r?.looking_for ?? null,

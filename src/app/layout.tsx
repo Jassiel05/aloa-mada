@@ -1,10 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/bricolage-grotesque";
-import "@fontsource-variable/manrope";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import UpdateBanner from "@/components/UpdateBanner";
 import { siteUrl } from "@/lib/site";
+import { bricolage, manrope } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export const viewport: Viewport = { themeColor: "#17133f" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${manrope.variable} ${bricolage.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Header />
         <div className="flex-1">{children}</div>

@@ -19,6 +19,7 @@ export async function loadProfileInput(profile: Profile): Promise<ProfileInput> 
     photo_path: profile.photo_path,
     phone: contacts?.phone ?? "",
     whatsapp: contacts?.whatsapp ?? "",
+    cv: cand?.cv_path ? { size: cand.cv_size, updatedAt: cand.cv_updated_at } : null,
     candidate: {
       job_title: cand?.job_title ?? "",
       skills: cand?.skills ?? [],
