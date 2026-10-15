@@ -157,7 +157,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="section-title">{recruiters ? "Recruteurs" : filtered ? "Résultats" : "Profils disponibles"}</h2>
-            {!error && <p className="mt-1 text-sm text-muted">{countLabel}{filtered && <> · <Link href={recruiters ? "/?vue=recruteurs" : "/"}>Effacer les filtres</Link></>}</p>}
+            {!error && (cards.length > 0 || filtered) && <p className="mt-1 text-sm text-muted">{cards.length > 0 ? countLabel : "Aucun résultat"}{filtered && <> · <Link href={recruiters ? "/?vue=recruteurs" : "/"}>Effacer les filtres</Link></>}</p>}
           </div>
           <div role="tablist" aria-label="Type de profils" className="inline-flex rounded-xl border border-line bg-white p-1 text-sm font-bold">
             <Link role="tab" aria-selected={!recruiters} href={href({ vue: undefined, contrat: undefined, dispo: undefined })} className={`rounded-lg px-4 py-2 no-underline hover:no-underline ${!recruiters ? "bg-forest text-white" : "text-ink hover:bg-subtle"}`}>Talents</Link>
