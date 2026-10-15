@@ -22,7 +22,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
   return (
     <main className="container-page flex max-w-3xl flex-col py-8">
       <Link href="/messages" className="text-sm font-bold">← Messages</Link>
-      <h1 className="mt-4 font-display text-3xl font-semibold">{other ? displayName(other.first_name, other.last_name) : "Conversation"}</h1>
+      <h1 className="mt-4 font-display text-3xl font-bold">{other ? displayName(other.first_name, other.last_name) : "Conversation"}</h1>
       <Thread conversationId={id} me={viewer.id} initial={(msgs ?? []) as Msg[]} />
     </main>
   );

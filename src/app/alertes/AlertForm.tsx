@@ -45,8 +45,8 @@ export default function AlertForm({
           {CONTRACTS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
       </div>
-      {state?.error && <p role="alert" className="text-sm font-semibold text-laterite-dark sm:col-span-2">{state.error}</p>}
-      {state?.info && <p role="status" className="text-sm font-semibold text-ravinala-ink sm:col-span-2">{state.info}</p>}
+      {state?.error && <p role="alert" className="text-sm font-semibold text-danger sm:col-span-2">{state.error}</p>}
+      {state?.info && <p role="status" className="text-sm font-semibold text-brand-ink sm:col-span-2">{state.info}</p>}
       <button type="submit" disabled={pending} className="btn-primary min-h-12 sm:col-span-2">{pending ? "Création…" : "Créer l'alerte"}</button>
     </form>
   );

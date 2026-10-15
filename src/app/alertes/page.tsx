@@ -19,7 +19,7 @@ export default async function AlertesPage({ searchParams }: { searchParams: Prom
 
   return (
     <main className="container-page max-w-3xl py-12">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Mes alertes</h1>
+      <h1 className="page-title">Mes alertes</h1>
       <p className="mt-2 text-muted">
         Recevez un email dès qu&apos;{defaultTarget === "talents" ? "un talent correspondant est validé" : "une offre correspondante est publiée"}. 10 alertes au maximum.
       </p>
@@ -30,7 +30,7 @@ export default async function AlertesPage({ searchParams }: { searchParams: Prom
         defaults={{ keyword: sp.metier ?? "", city: sp.ville ?? "", contract: sp.contrat ?? "" }}
       />
 
-      <h2 className="mt-12 font-display text-2xl font-semibold">Alertes actives</h2>
+      <h2 className="mt-12 section-title">Alertes actives</h2>
       {alerts.length === 0 ? (
         <p className="card mt-4 p-6 text-muted">Aucune alerte pour le moment.</p>
       ) : (

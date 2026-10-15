@@ -60,7 +60,7 @@ export default function OfferForm() {
         <textarea id="description" name="description" required rows={7} maxLength={3000} className="field py-3" placeholder="Missions, horaires, profil recherché…" />
       </div>
       <p className="text-sm text-muted">L&apos;offre reste en ligne 30 jours.</p>
-      {state?.error && <p role="alert" className="text-sm font-semibold text-laterite-dark">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-sm font-semibold text-danger">{state.error}</p>}
       <button type="submit" disabled={pending} className="btn-primary min-h-12 self-start px-8 text-base">{pending ? "Publication…" : "Publier l'offre"}</button>
     </form>
   );

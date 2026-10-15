@@ -55,17 +55,17 @@ export default function Thread({ conversationId, me, initial }: { conversationId
         {messages.map((m) => {
           const mine = m.sender_id === me;
           return (
-            <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 ${mine ? "self-end bg-ink text-white" : "self-start border border-line bg-white"}`}>
+            <li key={m.id} className={`max-w-[85%] rounded-2xl px-4 py-3 ${mine ? "self-end rounded-br-md bg-forest text-white" : "self-start rounded-bl-md border border-line bg-white"}`}>
               <p className="whitespace-pre-line">{m.body}</p>
               <p className={`mt-1 text-[11px] ${mine ? "text-white/70" : "text-muted"}`}>
-                {new Date(m.created_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}
+                {new Date(m.created_at).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
               </p>
             </li>
           );
         })}
       </ol>
       <div ref={end} />
-      <form onSubmit={send} className="sticky bottom-0 mt-6 flex gap-2 border-t border-line bg-ivory py-4">
+      <form onSubmit={send} className="sticky bottom-0 mt-6 flex gap-2 border-t border-line bg-canvas py-4">
         <label htmlFor="reply" className="sr-only">Votre réponse</label>
         <textarea
           id="reply"
@@ -84,7 +84,7 @@ export default function Thread({ conversationId, me, initial }: { conversationId
         />
         <button type="submit" disabled={sending || !text.trim()} className="btn-primary self-end">Envoyer</button>
       </form>
-      {error && <p role="alert" className="text-sm font-semibold text-laterite-dark">{error}</p>}
+      {error && <p role="alert" className="text-sm font-semibold text-danger">{error}</p>}
     </div>
   );
 }

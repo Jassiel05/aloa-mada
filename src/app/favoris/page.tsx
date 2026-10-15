@@ -29,10 +29,10 @@ export default async function FavorisPage() {
 
   return (
     <main className="container-page py-12">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Mes favoris</h1>
+      <h1 className="page-title">Mes favoris</h1>
       <p className="mt-2 text-muted">Les profils et les offres que vous avez mis de côté avec le cœur.</p>
 
-      <h2 className="mt-10 font-display text-2xl font-semibold">Profils</h2>
+      <h2 className="mt-10 section-title">Profils</h2>
       {people.length === 0 ? (
         <p className="card mt-4 p-6 text-muted">Aucun profil sauvegardé. Ouvrez une fiche dans la <Link href="/">galerie</Link> et touchez le cœur.</p>
       ) : (
@@ -41,8 +41,8 @@ export default async function FavorisPage() {
             <li key={p!.id} className="relative">
               <Link href={`/?p=${p!.id}`} className="group relative block aspect-[4/5] overflow-hidden rounded-2xl">
                 <Portrait id={p!.id} src={photoUrl(p!.photo_path)} alt="" />
-                <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent to-ink/85 px-3 pt-10 pb-3 text-white">
-                  <span className="font-display text-lg font-semibold">{displayName(p!.first_name, p!.last_name)}</span>
+                <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-b from-transparent via-forest/55 to-forest/95 px-3 pt-12 pb-3 text-white">
+                  <span className="font-display text-lg font-bold">{displayName(p!.first_name, p!.last_name)}</span>
                   <span className="text-xs font-semibold">{p!.candidate_details?.job_title ?? "Recruteur"}</span>
                 </span>
               </Link>
@@ -54,7 +54,7 @@ export default async function FavorisPage() {
         </ul>
       )}
 
-      <h2 className="mt-12 font-display text-2xl font-semibold">Offres</h2>
+      <h2 className="mt-12 section-title">Offres</h2>
       {offers.length === 0 ? (
         <p className="card mt-4 p-6 text-muted">Aucune offre sauvegardée.</p>
       ) : (
@@ -62,8 +62,8 @@ export default async function FavorisPage() {
           {offers.map(({ offer: o }) => (
             <li key={o!.id} className="card flex items-start justify-between gap-4 p-6">
               <Link href={`/offres/${o!.id}`} className="text-ink no-underline">
-                <p className="text-xs font-bold tracking-wider text-ravinala uppercase">{contractLabel(o!.contract_type)}</p>
-                <p className="mt-1 font-display text-xl font-semibold">{o!.title}</p>
+                <p className="inline-flex rounded-md bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand-ink">{contractLabel(o!.contract_type)}</p>
+                <p className="mt-1 font-display text-xl font-bold">{o!.title}</p>
                 <p className="mt-2 text-sm font-semibold">{formatRate(o!.rate_amount, o!.rate_currency, o!.rate_unit)}</p>
               </Link>
               <FavoriteButton offerId={o!.id} initial />

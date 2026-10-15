@@ -17,9 +17,10 @@ import {
   setPlan,
   setVerified,
   suspendProfile,
+  deleteMember,
 } from "@/app/actions/admin";
 
-export const metadata: Metadata = { title: "Admin" };
+export const metadata: Metadata = { title: "Back-office", robots: { index: false } };
 
 const TABS = [
   { key: "profils", label: "Profils à valider" },
@@ -47,10 +48,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
   return (
     <main className="container-page py-12">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Back-office</h1>
+      <h1 className="page-title">Back-office</h1>
       <nav aria-label="Sections admin" className="mt-6 flex flex-wrap gap-2">
         {TABS.map((t) => (
-          <Link key={t.key} href={`/admin?tab=${t.key}`} className={`rounded-full px-4 py-2.5 text-sm font-bold no-underline ${tab === t.key ? "bg-ink text-white" : "border border-field bg-white text-ink"}`}>
+          <Link key={t.key} href={`/admin?tab=${t.key}`} className={`rounded-xl px-4 py-2.5 text-sm font-bold no-underline hover:no-underline ${tab === t.key ? "bg-forest text-white" : "border border-line bg-white text-ink hover:border-field"}`}>
             {t.label}
             {counts[t.key] ? ` (${counts[t.key]})` : ""}
           </Link>
@@ -178,9 +179,9 @@ async function Members({ q }: { q?: string }) {
         <button type="submit" className="btn-primary">Chercher</button>
       </form>
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[820px] text-left text-sm">
+        <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="border-b border-line text-muted">
-            <tr><th className="p-4">Membre</th><th className="p-4">Rôle</th><th className="p-4">Statut</th><th className="p-4">Plan</th><th className="p-4">Abonnement</th><th className="p-4">Entreprise</th></tr>
+            <tr><th className="p-4">Membre</th><th className="p-4">Rôle</th><th className="p-4">Statut</th><th className="p-4">Plan</th><th className="p-4">Abonnement</th><th className="p-4">Entreprise</th><th className="p-4">Supprimer</th></tr>
           </thead>
           <tbody>
             {rows.map((p) => (
@@ -205,6 +206,17 @@ async function Members({ q }: { q?: string }) {
                   {p.role === "recruiter" && p.recruiter_details?.kind === "company" && (
                     <form action={setVerified.bind(null, p.id, !p.recruiter_details.verified)}>
                       <button type="submit" className="btn-ghost min-h-9 px-2">{p.recruiter_details.verified ? "Retirer le badge" : "Vérifier"}</button>
+                    </form>
+                  )}
+                </td>
+                <td className="p-4">
+                  {p.role !== "admin" && (
+                    <form action={deleteMember.bind(null, p.id)} className="flex items-center gap-2">
+                      <label className="flex items-center gap-1.5 text-xs text-muted">
+                        <input type="checkbox" name="confirm" value="oui" required className="size-4 accent-danger" />
+                        Confirmer
+                      </label>
+                      <button type="submit" className="btn min-h-9 px-3 text-danger hover:bg-danger-soft">Supprimer</button>
                     </form>
                   )}
                 </td>

@@ -22,9 +22,9 @@ export default async function CandidaturesPage() {
 
   return (
     <main className="container-page max-w-3xl py-12">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Mes candidatures</h1>
+      <h1 className="page-title">Mes candidatures</h1>
       {!viewer.isPro && (
-        <p className="mt-4 rounded-xl bg-sand p-4 text-sm">
+        <p className="mt-4 rounded-xl bg-subtle p-4 text-sm">
           En compte Simple, les recruteurs vous contactent directement. <Link href="/pro" className="font-bold">Passez en Pro</Link> pour postuler aux offres.
         </p>
       )}
@@ -38,7 +38,7 @@ export default async function CandidaturesPage() {
                 <Link href={`/offres/${r.offer?.id}`} className="font-bold text-ink">{r.offer?.title}</Link>
                 <p className="text-sm text-muted">{r.offer ? contractLabel(r.offer.contract_type) : ""}{r.offer?.city ? ` · ${r.offer.city}` : ""} · {new Date(r.created_at).toLocaleDateString("fr-FR")}</p>
               </div>
-              <span className="rounded-full bg-sand px-3 py-1 text-sm font-semibold">{STATUS_LABEL[r.status]}</span>
+              <span className="rounded-full bg-subtle px-3 py-1 text-sm font-semibold">{STATUS_LABEL[r.status]}</span>
             </li>
           ))}
         </ul>

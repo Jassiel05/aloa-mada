@@ -13,7 +13,7 @@ export default function ApplyBox({ offerId, canApply, alreadyApplied, pendingPro
   const [pending, start] = useTransition();
 
   if (done) {
-    return <p role="status" className="rounded-2xl bg-ravinala-soft p-5 font-semibold text-ravinala-ink">Candidature envoyée. Le recruteur voit votre profil complet et peut vous écrire.</p>;
+    return <p role="status" className="rounded-2xl bg-brand-soft p-5 font-semibold text-brand-ink">Candidature envoyée. Le recruteur voit votre profil complet et peut vous écrire.</p>;
   }
 
   function onClick() {
@@ -43,7 +43,7 @@ export default function ApplyBox({ offerId, canApply, alreadyApplied, pendingPro
       ) : (
         <button type="button" onClick={onClick} className="btn-primary min-h-13 w-full text-base">Postuler</button>
       )}
-      {error && <p role="alert" className="mt-3 text-sm font-semibold text-laterite-dark">{error}</p>}
+      {error && <p role="alert" className="mt-3 text-sm font-semibold text-danger">{error}</p>}
       <UpgradeModal kind={upgrade ? "apply" : null} onClose={() => setUpgrade(false)} />
     </div>
   );

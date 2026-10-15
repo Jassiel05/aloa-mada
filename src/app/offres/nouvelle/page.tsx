@@ -12,10 +12,10 @@ export default async function NewOfferPage() {
 
   return (
     <main className="container-page max-w-3xl py-12">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Publier une offre</h1>
+      <h1 className="page-title">Publier une offre</h1>
       {!viewer.can.publishOffer ? (
         <div className="card mt-8 p-8">
-          <p className="font-display text-2xl">
+          <p className="font-display text-2xl font-bold">
             {viewer.isPro ? "Votre profil est en cours de validation." : "La publication d'offres est réservée aux recruteurs Pro."}
           </p>
           <p className="mt-2 text-muted">
