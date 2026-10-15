@@ -77,6 +77,29 @@ export default function ProfileForm({ userId, role, initial, mode }: Props) {
       {step === 0 && (
         <div className="flex flex-col gap-6">
           <PhotoUpload userId={userId} value={v.photo_path} onChange={(photo_path) => setV({ ...v, photo_path })} />
+          <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-5">
+            <fieldset>
+              <legend className="label">Vous êtes</legend>
+              <div className="flex flex-wrap gap-2">
+                {([
+                  ["homme", "Un homme"],
+                  ["femme", "Une femme"],
+                ] as const).map(([val, label]) => (
+                  <label key={val} className="chip">
+                    <input type="radio" name="gender" className="sr-only" checked={v.gender === val} onChange={() => setV({ ...v, gender: val })} />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <label className="flex items-start gap-3 text-sm">
+              <input type="checkbox" checked={v.photo_hidden} onChange={(e) => setV({ ...v, photo_hidden: e.target.checked })} className="mt-0.5 size-4 accent-brand" />
+              <span>
+                <span className="font-bold">Ne pas afficher ma photo</span>
+                <span className="block text-muted">Une silhouette d&apos;homme ou de femme s&apos;affiche à la place. Votre métier reste mis en avant.</span>
+              </span>
+            </label>
+          </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="first_name" className="label">Prénom *</label>
