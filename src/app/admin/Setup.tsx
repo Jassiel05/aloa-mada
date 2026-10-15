@@ -188,13 +188,10 @@ export default function Setup({ checks }: { checks: Check[] }) {
         </div>
         <div className="card p-6">
           <h3 className="font-display text-lg font-bold">Ajouter un autre admin</h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted">La personne crée d&apos;abord son compte sur le site, puis dans le SQL Editor de Supabase :</p>
-          <pre className="mt-3 overflow-x-auto rounded-xl bg-night p-4 text-[12px] leading-relaxed text-white">{`update public.profiles
-set role = 'admin',
-    status = 'approved',
-    onboarded = true
-where id = (select id from auth.users
-  where email = 'son-email@exemple.com');`}</pre>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Dans Supabase › <strong>Table Editor</strong> › table <code>admin_emails</code>, cliquez sur <strong>Insert row</strong> et saisissez l&apos;email
+            (en minuscules), puis la personne crée son compte : elle devient admin dès que son email est confirmé (ou en s&apos;inscrivant avec Google).
+          </p>
         </div>
       </aside>
     </div>
