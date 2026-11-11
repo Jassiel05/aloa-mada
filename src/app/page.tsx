@@ -7,6 +7,7 @@ import { toCard, type Card } from "@/lib/cards";
 import type { Contacts, ProfileWithDetails } from "@/lib/types";
 import Gallery from "@/components/Gallery";
 import Portrait from "@/components/Portrait";
+import { visibleInGallery } from "@/lib/roles";
 
 type Search = { q?: string; ville?: string; contrat?: string; dispo?: string; vue?: string; p?: string; n?: string; compte?: string };
 
@@ -29,7 +30,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     .from("profiles")
     .select(`*, ${details}`)
     .eq("status", "approved")
-    .eq("role", recruiters ? "recruiter" : "candidate")
+    .in("role", recruiters ? ["recruiter", "admin"] : ["candidate", "admin"])
     .order("updated_at", { ascending: false })
     .limit(limit + 1);
 
@@ -48,7 +49,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   }
 
   const { data, error } = await query;
-  const fetched = (data ?? []) as unknown as ProfileWithDetails[];
+  // Un administrateur n'apparaît que s'il a activé le rôle et rempli sa fiche (voir lib/roles.ts)
+  const fetched = ((data ?? []) as unknown as ProfileWithDetails[]).filter((p) => visibleInGallery(p, recruiters));
   const hasMore = fetched.length > limit;
   const rows = fetched.slice(0, limit);
 

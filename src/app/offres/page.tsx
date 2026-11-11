@@ -30,7 +30,7 @@ export default async function OffresPage({ searchParams }: { searchParams: Promi
   const { data } = await query;
   const offers = (data ?? []) as Offer[];
 
-  const isRecruiter = viewer?.profile.role === "recruiter";
+  const isRecruiter = !!viewer?.isRecruiter;
   const filtered = Boolean(q || sp.ville || sp.contrat);
   const age = (d: string) => {
     const days = Math.floor((Date.now() - new Date(d).getTime()) / 86400000);

@@ -18,6 +18,9 @@ export interface Profile {
   headline: string | null;
   gender: "homme" | "femme" | null;
   photo_hidden: boolean;
+  /** Options réservées aux administrateurs : être aussi candidat et/ou recruteur */
+  admin_is_candidate?: boolean;
+  admin_is_recruiter?: boolean;
   onboarded: boolean;
   created_at: string;
 }
@@ -92,6 +95,10 @@ export interface Viewer {
   profile: Profile;
   isPro: boolean;
   isAdmin: boolean;
+  /** Candidat, ou administrateur ayant activé « aussi candidat » */
+  isCandidate: boolean;
+  /** Recruteur, ou administrateur ayant activé « aussi recruteur » */
+  isRecruiter: boolean;
   can: {
     apply: boolean;
     startConversation: boolean;

@@ -6,6 +6,7 @@ import { loadProfileInput } from "@/lib/profile-input";
 import ProfileForm from "@/components/ProfileForm";
 import AvailabilityToggle from "./AvailabilityToggle";
 import DeleteAccount from "./DeleteAccount";
+import AdminRoles from "./AdminRoles";
 
 export const metadata: Metadata = { title: "Mon profil" };
 
@@ -16,12 +17,19 @@ const STATUS: Record<string, { text: string; tone: string }> = {
   rejected: { text: "Profil refusé. Corrigez le point ci-dessous puis enregistrez pour le renvoyer.", tone: "bg-danger-soft text-danger" },
 };
 
-export default async function ProfilPage({ searchParams }: { searchParams: Promise<{ bienvenue?: string }> }) {
-  const { bienvenue } = await searchParams;
+export default async function ProfilPage({ searchParams }: { searchParams: Promise<{ bienvenue?: string; role?: string }> }) {
+  const { bienvenue, role: roleParam } = await searchParams;
   const viewer = await requireOnboarded("/profil");
   const p = viewer.profile;
   const initial = await loadProfileInput(p);
-  const role = p.role === "recruiter" ? "recruiter" : "candidate";
+  // Administrateur : « candidat » et « recruteur » sont des options en plus du rôle admin
+  const adminRoles: ("candidate" | "recruiter")[] = viewer.isAdmin
+    ? [...(viewer.isCandidate ? ["candidate" as const] : []), ...(viewer.isRecruiter ? ["recruiter" as const] : [])]
+    : [];
+  const role: "candidate" | "recruiter" = viewer.isAdmin
+    ? (adminRoles.find((r) => r === roleParam) ?? adminRoles[0] ?? "candidate")
+    : p.role === "recruiter" ? "recruiter" : "candidate";
+  const showForm = !viewer.isAdmin || adminRoles.length > 0;
   const status = STATUS[p.status];
   const supabase = await createClient();
   const { data: views } = await supabase.rpc("my_view_count");
@@ -38,16 +46,20 @@ export default async function ProfilPage({ searchParams }: { searchParams: Promi
         <div>
           <h1 className="page-title">Mon profil</h1>
           <p className="mt-1 text-muted">
-            {role === "candidate" ? "Candidat" : "Recruteur"}, compte {viewer.isPro ? `Pro${expires ? ` jusqu'au ${expires}` : ""}` : "Simple"}
+            {viewer.isAdmin
+              ? `Administrateur${adminRoles.length ? `, aussi ${adminRoles.map((r) => (r === "candidate" ? "candidat" : "recruteur")).join(" et ")}` : ""}`
+              : role === "candidate" ? "Candidat" : "Recruteur"}, compte {viewer.isPro ? `Pro${expires ? ` jusqu'au ${expires}` : ""}` : "Simple"}
           </p>
         </div>
         {!viewer.isPro && <Link href="/pro" className="btn-outline">Passer en Pro</Link>}
       </div>
 
-      <p className={`mt-6 rounded-xl p-4 text-sm font-semibold ${status.tone}`}>
-        {status.text}
-        {p.status === "rejected" && p.rejection_reason && <span className="mt-1 block font-normal">Motif : {p.rejection_reason}</span>}
-      </p>
+      {showForm && (
+        <p className={`mt-6 rounded-xl p-4 text-sm font-semibold ${status.tone}`}>
+          {status.text}
+          {p.status === "rejected" && p.rejection_reason && <span className="mt-1 block font-normal">Motif : {p.rejection_reason}</span>}
+        </p>
+      )}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         <div className="card p-5">
@@ -64,13 +76,33 @@ export default async function ProfilPage({ searchParams }: { searchParams: Promi
         </Link>
       </div>
 
-      {role === "candidate" && initial.candidate && (
+      {viewer.isAdmin && <AdminRoles candidate={viewer.isCandidate} recruiter={viewer.isRecruiter} />}
+
+      {viewer.isAdmin && adminRoles.length > 1 && (
+        <div role="tablist" aria-label="Profil à modifier" className="mt-8 inline-flex rounded-xl border border-line bg-white p-1 text-sm font-bold">
+          {adminRoles.map((r) => (
+            <Link
+              key={r}
+              role="tab"
+              aria-selected={role === r}
+              href={`/profil?role=${r}`}
+              className={`rounded-lg px-4 py-2 no-underline hover:no-underline ${role === r ? "bg-night text-white" : "text-ink hover:bg-subtle"}`}
+            >
+              {r === "candidate" ? "Profil candidat" : "Profil recruteur"}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {showForm && role === "candidate" && initial.candidate && (
         <AvailabilityToggle current={initial.candidate.availability} />
       )}
 
-      <div className="mt-10">
-        <ProfileForm userId={viewer.id} role={role} initial={initial} mode="edit" />
-      </div>
+      {showForm && (
+        <div className="mt-10">
+          <ProfileForm key={role} userId={viewer.id} role={role} initial={initial} mode="edit" />
+        </div>
+      )}
 
       {!viewer.isAdmin && <DeleteAccount />}
     </main>

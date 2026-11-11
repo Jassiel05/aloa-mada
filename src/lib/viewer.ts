@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
+import { hasCandidateRole, hasRecruiterRole } from "./roles";
 import type { Profile, Viewer } from "./types";
 
 /** Utilisateur connecté + droits (miroir de la fonction SQL can(), qui reste la vraie protection). */
@@ -25,6 +26,8 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     profile,
     isPro,
     isAdmin,
+    isCandidate: hasCandidateRole(profile),
+    isRecruiter: hasRecruiterRole(profile),
     can: {
       apply: isAdmin || (profile.role === "candidate" && isPro && approved),
       startConversation: isAdmin || (approved && (profile.role === "recruiter" || (profile.role === "candidate" && isPro))),

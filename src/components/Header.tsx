@@ -8,8 +8,8 @@ type NavItem = { href: string; label: string };
 
 export default async function Header() {
   const viewer = await getViewer();
-  const isRecruiter = viewer?.profile.role === "recruiter";
-  const isCandidate = viewer?.profile.role === "candidate";
+  const isRecruiter = !!viewer?.isRecruiter;
+  const isCandidate = !!viewer?.isCandidate;
 
   const main: NavItem[] = [
     { href: "/", label: "Talents" },
