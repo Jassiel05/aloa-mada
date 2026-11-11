@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { hasCandidateRole, hasRecruiterRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 import type { Availability, RateUnit } from "@/lib/types";
 
@@ -82,7 +84,7 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
   const website = cleanUrl(input.recruiter?.website);
   if (website.bad) return { error: "L'adresse du site web n'est pas valide (ex. https://votre-entreprise.mg)." };
 
-  const { data: current } = await supabase.from("profiles").select("status, role").eq("id", user.id).single();
+  const { data: current } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   const nextStatus = submit && current && (current.status === "draft" || current.status === "rejected") ? "pending" : undefined;
 
   const { error: pErr } = await supabase
@@ -106,7 +108,7 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
     .upsert({ profile_id: user.id, email: user.email, phone: clean(input.phone), whatsapp: clean(input.whatsapp) });
   if (cErr) return { error: cErr.message };
 
-  if (current?.role === "candidate" && input.candidate) {
+  if (current && hasCandidateRole(current) && input.candidate) {
     const c = input.candidate;
     const { error } = await supabase.from("candidate_details").upsert({
       profile_id: user.id,
@@ -129,7 +131,7 @@ export async function saveProfile(input: ProfileInput, submit: boolean): Promise
     if (error) return { error: error.message };
   }
 
-  if (current?.role === "recruiter" && input.recruiter) {
+  if (current && hasRecruiterRole(current) && input.recruiter) {
     const r = input.recruiter;
     const { error } = await supabase.from("recruiter_details").upsert({
       profile_id: user.id,
@@ -167,8 +169,8 @@ export async function saveCv(path: string, size: number): Promise<{ error?: stri
   } = await supabase.auth.getUser();
   if (!user) return { error: "Session expirée, reconnectez-vous." };
   if (!path.startsWith(`${user.id}/`) || !path.endsWith(".pdf")) return { error: "Fichier invalide." };
-  const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (me?.role !== "candidate") return { error: "Le CV est réservé aux profils candidats." };
+  const { data: me } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  if (!me || !hasCandidateRole(me)) return { error: "Le CV est réservé aux profils candidats." };
 
   const { data: before } = await supabase.from("candidate_details").select("cv_path").eq("profile_id", user.id).maybeSingle();
   const { error } = await supabase
@@ -191,4 +193,21 @@ export async function removeCv(): Promise<{ error?: string }> {
   if (before?.cv_path) await supabase.storage.from("cvs").remove([before.cv_path]);
   revalidatePath("/", "layout");
   return {};
+}
+
+/** Administrateur : choisir d'être aussi candidat et/ou recruteur (le rôle principal reste admin). */
+export async function setAdminRoles(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/connexion?next=/profil");
+  const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (me?.role !== "admin") redirect("/profil");
+
+  const candidate = formData.get("candidate") === "on";
+  const recruiter = formData.get("recruiter") === "on";
+  await supabase.from("profiles").update({ admin_is_candidate: candidate, admin_is_recruiter: recruiter }).eq("id", user.id);
+  revalidatePath("/", "layout");
+  redirect(candidate ? "/profil?role=candidate" : recruiter ? "/profil?role=recruiter" : "/profil");
 }
