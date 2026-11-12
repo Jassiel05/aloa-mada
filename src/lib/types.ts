@@ -95,6 +95,8 @@ export interface Viewer {
   profile: Profile;
   isPro: boolean;
   isAdmin: boolean;
+  /** Membre connecté dont le profil est validé (ou administrateur) : voit salaires et coordonnées du site */
+  isValidated: boolean;
   /** Candidat, ou administrateur ayant activé « aussi candidat » */
   isCandidate: boolean;
   /** Recruteur, ou administrateur ayant activé « aussi recruteur » */

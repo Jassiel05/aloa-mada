@@ -47,7 +47,7 @@ export default async function Footer() {
           <p className="mt-4 text-sm leading-relaxed">
             La plateforme de recrutement direct à Madagascar. Des profils avec photo, vérifiés un par un, et un contact en deux clics.
           </p>
-          {(s.contact_email || s.contact_phone) && (
+          {viewer?.isValidated && (s.contact_email || s.contact_phone) && (
             <p className="mt-4 flex flex-col gap-1 text-sm">
               {s.contact_email && <a href={`mailto:${s.contact_email}`} className="font-semibold text-white">{s.contact_email}</a>}
               {s.contact_phone && <a href={`tel:${s.contact_phone.replace(/\s/g, "")}`} className="font-semibold text-white">{s.contact_phone}</a>}

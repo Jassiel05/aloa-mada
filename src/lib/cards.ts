@@ -31,7 +31,8 @@ export interface Card {
   contacts: { email: string | null; phone: string | null; whatsapp: string | null } | null;
 }
 
-export function toCard(p: ProfileWithDetails, contacts?: Contacts): Card {
+/** `showRate` : la prétention n'est donnée qu'aux membres validés (jamais au public). */
+export function toCard(p: ProfileWithDetails, contacts?: Contacts, showRate = false): Card {
   const c = p.candidate_details;
   const r = p.recruiter_details;
   const isPro = p.plan === "pro" && (!p.plan_expires_at || new Date(p.plan_expires_at) > new Date());
@@ -51,7 +52,7 @@ export function toCard(p: ProfileWithDetails, contacts?: Contacts): Card {
     available,
     availability: c ? availabilityLabel(c.availability, c.available_from) : "Recrute",
     availabilityLong: c ? availabilityLabel(c.availability, c.available_from, true) : "Recrute en ce moment",
-    rate: c ? formatRate(c.rate_amount, c.rate_currency, c.rate_unit) : null,
+    rate: c && showRate ? formatRate(c.rate_amount, c.rate_currency, c.rate_unit) : null,
     contracts: (c?.contract_types ?? []).map(contractLabel),
     modes: (c?.work_modes ?? []).map(workModeLabel),
     experience: c?.experience_years != null ? `${c.experience_years} an${c.experience_years > 1 ? "s" : ""}` : null,

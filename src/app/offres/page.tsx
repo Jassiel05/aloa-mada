@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/viewer";
 import { CITIES, CONTRACTS, contractLabel, formatRate, workModeLabel } from "@/lib/labels";
 import type { Offer } from "@/lib/types";
+import LockedInfo from "@/components/LockedInfo";
 
 export const metadata: Metadata = {
   title: "Offres d'emploi et missions à Madagascar",
@@ -100,7 +101,7 @@ export default async function OffresPage({ searchParams }: { searchParams: Promi
                   <p className="mt-1.5 text-sm text-muted">
                     {[o.city ?? "Lieu à préciser", o.work_mode ? workModeLabel(o.work_mode) : null].filter(Boolean).join(", ")}
                   </p>
-                  <p className="mt-auto pt-5 font-bold">{formatRate(o.rate_amount, o.rate_currency, o.rate_unit)}</p>
+                  <p className="mt-auto pt-5 font-bold">{viewer?.isValidated ? formatRate(o.rate_amount, o.rate_currency, o.rate_unit) : <LockedInfo loggedIn={!!viewer} className="text-sm font-semibold">Rémunération réservée aux membres validés</LockedInfo>}</p>
                 </Link>
               </li>
             ))}

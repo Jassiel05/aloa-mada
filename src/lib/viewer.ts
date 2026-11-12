@@ -26,6 +26,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     profile,
     isPro,
     isAdmin,
+    isValidated: isAdmin || approved,
     isCandidate: hasCandidateRole(profile),
     isRecruiter: hasRecruiterRole(profile),
     can: {

@@ -33,7 +33,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
   const expired = offer.status !== "open" || new Date(offer.expires_at) < new Date();
 
   const facts: [string, React.ReactNode][] = [
-    ["Rémunération", formatRate(offer.rate_amount, offer.rate_currency, offer.rate_unit)],
+    ["Rémunération", viewer?.isValidated ? formatRate(offer.rate_amount, offer.rate_currency, offer.rate_unit) : "Réservée aux membres validés"],
     ["Contrat", contractLabel(offer.contract_type)],
     ...(offer.city ? ([["Lieu", offer.city]] as [string, string][]) : []),
     ...(offer.work_mode ? ([["Organisation", workModeLabel(offer.work_mode)]] as [string, string][]) : []),

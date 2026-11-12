@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getSettings } from "@/lib/pricing";
 import LegalPage, { Publisher } from "@/components/LegalPage";
+import { getViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Conditions générales d'utilisation",
@@ -9,8 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function CguPage() {
-  const s = await getSettings();
-  const contact = s.contact_email ? <a href={`mailto:${s.contact_email}`}>{s.contact_email}</a> : "l'adresse indiquée en bas de page";
+  const [s, viewer] = await Promise.all([getSettings(), getViewer()]);
+  const showContact = !!viewer?.isValidated;
+  const contact = showContact && s.contact_email ? <a href={`mailto:${s.contact_email}`}>{s.contact_email}</a> : "l'adresse de contact réservée aux membres validés";
   return (
     <LegalPage title="Conditions générales d'utilisation" updated="15 octobre 2026">
       <p>
@@ -18,7 +20,7 @@ export default async function CguPage() {
       </p>
 
       <h2>1. Éditeur du site</h2>
-      <Publisher s={s} />
+      <Publisher s={s} showContact={showContact} />
 
       <h2>2. Le service</h2>
       <p>

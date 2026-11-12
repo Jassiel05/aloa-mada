@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/pricing";
 import LegalPage, { Publisher } from "@/components/LegalPage";
+import { getViewer } from "@/lib/viewer";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
@@ -8,8 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ConfidentialitePage() {
-  const s = await getSettings();
-  const contact = s.contact_email ? <a href={`mailto:${s.contact_email}`}>{s.contact_email}</a> : "l'adresse indiquée en bas de page";
+  const [s, viewer] = await Promise.all([getSettings(), getViewer()]);
+  const showContact = !!viewer?.isValidated;
+  const contact = showContact && s.contact_email ? <a href={`mailto:${s.contact_email}`}>{s.contact_email}</a> : "l'adresse de contact réservée aux membres validés";
   return (
     <LegalPage title="Politique de confidentialité" updated="15 octobre 2026">
       <p>
@@ -18,7 +20,7 @@ export default async function ConfidentialitePage() {
       </p>
 
       <h2>Responsable du traitement</h2>
-      <Publisher s={s} />
+      <Publisher s={s} showContact={showContact} />
 
       <h2>Données collectées</h2>
       <ul>

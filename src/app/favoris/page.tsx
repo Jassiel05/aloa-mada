@@ -64,7 +64,7 @@ export default async function FavorisPage() {
               <Link href={`/offres/${o!.id}`} className="text-ink no-underline">
                 <p className="inline-flex rounded-md bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand-ink">{contractLabel(o!.contract_type)}</p>
                 <p className="mt-1 font-display text-xl font-bold">{o!.title}</p>
-                <p className="mt-2 text-sm font-semibold">{formatRate(o!.rate_amount, o!.rate_currency, o!.rate_unit)}</p>
+                <p className="mt-2 text-sm font-semibold">{viewer.isValidated ? formatRate(o!.rate_amount, o!.rate_currency, o!.rate_unit) : "Réservée aux membres validés"}</p>
               </Link>
               <FavoriteButton offerId={o!.id} initial />
             </li>

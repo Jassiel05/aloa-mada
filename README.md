@@ -27,6 +27,8 @@ Plateforme de mise en relation directe entre recruteurs et candidats à Madagasc
 | Postuler à une offre | non → fenêtre Pro | oui | — | — |
 | Publier une offre | — | — | non → fenêtre Pro | oui |
 
+**Salaires et emails du site.** Les rémunérations (offres et prétentions des candidats) et l'email / téléphone de contact du site (pied de page, CGU, politique de confidentialité) ne s'affichent que pour un membre connecté dont le profil est validé (`viewer.isValidated`, administrateurs inclus). Les noms restent visibles. L'email et le téléphone des membres restent réservés aux recruteurs et aux membres Pro (`can('see_contacts')`).
+
 **Administrateur.** Le rôle principal reste `admin` (tous les droits). Sur la page « Mon profil », un administrateur peut en plus cocher « Aussi candidat » et/ou « Aussi recruteur » (colonnes `admin_is_candidate` et `admin_is_recruiter`, migration `0013`) : il peut alors remplir une fiche candidat et/ou recruteur, apparaître dans la galerie une fois la fiche remplie, postuler et publier des offres. L'import du CV reste réservé aux profils candidats : refusé aux recruteurs et à un administrateur qui n'a pas coché « Aussi candidat ». Un membre ne peut pas se donner ces options (protégées par le trigger `guard_profile`).
 
 Tout passe par la fonction SQL `can(action)` et les règles RLS de `supabase/migrations/0001_schema.sql`. Un Pro expiré redevient Simple automatiquement, une nouvelle photo repasse en modération, et un membre ne peut ni changer son plan ni se valider lui-même.

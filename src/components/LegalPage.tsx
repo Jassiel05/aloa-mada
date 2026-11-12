@@ -14,15 +14,21 @@ export default function LegalPage({ title, updated, children }: { title: string;
 }
 
 /** Éditeur et contact tels que renseignés dans /admin › Paramètres. */
-export function Publisher({ s }: { s: { publisher_name: string | null; publisher_address: string | null; publisher_ids: string | null; contact_email: string | null; contact_phone: string | null } }) {
+export function Publisher({ s, showContact = false }: { showContact?: boolean; s: { publisher_name: string | null; publisher_address: string | null; publisher_ids: string | null; contact_email: string | null; contact_phone: string | null } }) {
   const name = s.publisher_name || "Aloa-Mada";
   return (
     <div className="rounded-2xl bg-white p-5 ring-1 ring-line">
       <p className="font-bold">{name}</p>
       {s.publisher_address && <p>{s.publisher_address}</p>}
       {s.publisher_ids && <p>{s.publisher_ids}</p>}
-      {s.contact_email && <p>Email : <a href={`mailto:${s.contact_email}`}>{s.contact_email}</a></p>}
-      {s.contact_phone && <p>Téléphone : {s.contact_phone}</p>}
+      {showContact ? (
+        <>
+          {s.contact_email && <p>Email : <a href={`mailto:${s.contact_email}`}>{s.contact_email}</a></p>}
+          {s.contact_phone && <p>Téléphone : {s.contact_phone}</p>}
+        </>
+      ) : (
+        (s.contact_email || s.contact_phone) && <p className="text-muted">Email et téléphone : visibles par les membres connectés dont le profil est validé.</p>
+      )}
     </div>
   );
 }

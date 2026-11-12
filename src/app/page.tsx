@@ -78,7 +78,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   }
 
   const cards = rows
-    .map((r) => toCard({ ...r, candidate_details: r.candidate_details ?? null, recruiter_details: r.recruiter_details ?? null }, contacts.get(r.id)))
+    .map((r) => toCard({ ...r, candidate_details: r.candidate_details ?? null, recruiter_details: r.recruiter_details ?? null }, contacts.get(r.id), !!viewer?.isValidated))
     .sort((a, b) => Number(b.available) - Number(a.available) || Number(b.isPro) - Number(a.isPro));
 
   const showcase = cards.filter((c) => c.photo && c.available).slice(0, 3);
