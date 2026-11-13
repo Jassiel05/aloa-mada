@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import { signUp } from "@/app/actions/auth";
 import OAuthButtons from "@/components/OAuthButtons";
 import type { OAuthProvider } from "@/lib/oauth";
+import PasswordField from "@/components/PasswordField";
 
 const ROLES = [
   { value: "candidate", title: "Je cherche du travail", text: "Emploi, mission ou extra : je présente mon profil aux recruteurs." },
@@ -59,7 +60,7 @@ export default function SignUpForm({ providers }: { providers: OAuthProvider[] }
         </div>
         <div>
           <label htmlFor="password" className="label">Mot de passe</label>
-          <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" aria-describedby="password-hint" className="field" />
+          <PasswordField autoComplete="new-password" minLength={8} describedBy="password-hint" />
           <p id="password-hint" className="mt-1.5 text-[13px] text-muted">8 caractères minimum.</p>
         </div>
         <label className="flex items-start gap-3 text-sm">

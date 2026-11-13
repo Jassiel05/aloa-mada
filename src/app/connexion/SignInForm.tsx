@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { signIn } from "@/app/actions/auth";
+import PasswordField from "@/components/PasswordField";
 
 export default function SignInForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState(signIn, undefined);
@@ -14,7 +15,7 @@ export default function SignInForm({ next }: { next: string }) {
       </div>
       <div>
         <label htmlFor="password" className="label">Mot de passe</label>
-        <input id="password" name="password" type="password" required autoComplete="current-password" className="field" />
+        <PasswordField autoComplete="current-password" />
       </div>
       {state?.error && <p role="alert" className="text-sm font-semibold text-danger">{state.error}</p>}
       <button type="submit" disabled={pending} className="btn-primary min-h-12 text-base">

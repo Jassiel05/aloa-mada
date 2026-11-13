@@ -72,13 +72,13 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   }
 
   let contacts = new Map<string, Contacts>();
-  if (viewer?.can.seeContacts && rows.length) {
+  if (viewer?.can.seeContacts && viewer.isValidated && rows.length) {
     const { data: c } = await supabase.from("profile_contacts").select("*").in("profile_id", rows.map((r) => r.id));
     contacts = new Map((c ?? []).map((x: Contacts) => [x.profile_id, x]));
   }
 
   const cards = rows
-    .map((r) => toCard({ ...r, candidate_details: r.candidate_details ?? null, recruiter_details: r.recruiter_details ?? null }, contacts.get(r.id)))
+    .map((r) => toCard({ ...r, candidate_details: r.candidate_details ?? null, recruiter_details: r.recruiter_details ?? null }, contacts.get(r.id), !!viewer?.isValidated))
     .sort((a, b) => Number(b.available) - Number(a.available) || Number(b.isPro) - Number(a.isPro));
 
   const showcase = cards.filter((c) => c.photo && c.available).slice(0, 3);
@@ -184,7 +184,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <Gallery
             cards={cards}
             initialId={sp.p ?? null}
-            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, seeContacts: viewer.can.seeContacts, favorites } : null}
+            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, seeContacts: viewer.can.seeContacts, validated: viewer.isValidated, favorites } : null}
           />
         )}
 

@@ -34,6 +34,13 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
   if (!card) return <dialog ref={ref} className="hidden" />;
 
   const isSelf = viewer?.id === card.id;
+  // Pourquoi les coordonnées (téléphone, WhatsApp, email) ne sont pas affichées
+  const contactsLock =
+    isSelf || card.contacts ? null
+    : !viewer ? "Téléphone, WhatsApp et email : visibles par les membres validés."
+    : !viewer.validated ? "Disponibles après la validation de votre profil."
+    : !viewer.seeContacts ? "Réservées aux recruteurs et aux membres Pro."
+    : null;
 
   function onContact() {
     if (!viewer) return;
@@ -102,16 +109,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
 
             {card.headline && <p className="text-base leading-relaxed">{card.headline}</p>}
 
-            {!viewer ? (
-              <div className="rounded-2xl bg-brand-soft p-5">
-                <p className="font-semibold text-brand-ink">Créez votre compte gratuit pour voir la fiche complète et écrire à {card.first}.</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Link href="/inscription" className="btn-primary">Créer mon profil</Link>
-                  <Link href={`/connexion?next=${encodeURIComponent(`/?p=${card.id}`)}`} className="btn-outline">Se connecter</Link>
-                </div>
-              </div>
-            ) : (
-              <>
+            <>
                 {card.skills.length > 0 && (
                   <ul className="flex flex-wrap gap-2" aria-label="Compétences">
                     {card.skills.map((s) => <li key={s} className="rounded-lg bg-subtle px-3 py-1.5 text-[13px] font-semibold">{s}</li>)}
@@ -119,6 +117,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                 )}
                 <dl className="grid grid-cols-[130px_1fr] gap-x-4 gap-y-3 border-t border-line pt-5 text-[15px]">
                   {card.rate && (<><dt className="text-muted">Prétention</dt><dd className="font-bold">{card.rate}</dd></>)}
+                  {card.rateHidden && (<><dt className="text-muted">Prétention</dt><dd className="text-muted">Montant réservé aux membres validés</dd></>)}
                   {card.contracts.length > 0 && (<><dt className="text-muted">Contrat</dt><dd className="font-semibold">{card.contracts.join(", ")}</dd></>)}
                   {card.modes.length > 0 && (<><dt className="text-muted">Mode</dt><dd className="font-semibold">{card.modes.join(", ")}</dd></>)}
                   {card.experience && (<><dt className="text-muted">Expérience</dt><dd className="font-semibold">{card.experience}</dd></>)}
@@ -127,6 +126,7 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                   {card.contacts?.phone && (<><dt className="text-muted">Téléphone</dt><dd className="font-semibold"><a href={`tel:${card.contacts.phone}`}>{card.contacts.phone}</a></dd></>)}
                   {card.contacts?.whatsapp && (<><dt className="text-muted">WhatsApp</dt><dd className="font-semibold">{card.contacts.whatsapp}</dd></>)}
                   {card.contacts?.email && (<><dt className="text-muted">Email</dt><dd className="font-semibold break-all"><a href={`mailto:${card.contacts.email}`}>{card.contacts.email}</a></dd></>)}
+                  {contactsLock && (<><dt className="text-muted">Coordonnées</dt><dd className="text-muted">{contactsLock}</dd></>)}
                 </dl>
                 {card.bio && <p className="leading-relaxed whitespace-pre-line">{card.bio}</p>}
                 {card.lookingFor && (
@@ -135,9 +135,9 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                     <p className="mt-1 leading-relaxed whitespace-pre-line">{card.lookingFor}</p>
                   </div>
                 )}
-                {(card.portfolio || card.hasCv) && (
+                {(card.portfolio || (viewer && card.hasCv)) && (
                   <div className="flex flex-wrap gap-2">
-                    {card.hasCv && (viewer.seeContacts || isSelf) && (
+                    {viewer && card.hasCv && (viewer.seeContacts || isSelf) && (
                       <a href={`/cv/${card.id}`} target="_blank" rel="noopener" className="btn-outline min-h-10">
                         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /></svg>
                         Voir le CV (PDF)
@@ -146,18 +146,26 @@ export default function ProfileDrawer({ card, viewer, onClose }: { card: Card | 
                     {card.portfolio && (
                       <a href={card.portfolio} target="_blank" rel="noopener noreferrer nofollow" className="btn-outline min-h-10">Voir le portfolio ↗</a>
                     )}
-                    {card.hasCv && !viewer.seeContacts && !isSelf && (
+                    {viewer && card.hasCv && !viewer.seeContacts && !isSelf && (
                       <button type="button" onClick={() => setUpgrade("contact")} className="btn-ghost min-h-10">CV réservé aux membres Pro</button>
                     )}
                   </div>
                 )}
-                {!isSelf && (
+                {viewer && !isSelf && (
                   <button type="button" onClick={onReport} disabled={reported || pending} className="self-start text-sm text-muted underline">
                     {reported ? "Signalement envoyé, merci." : "Signaler ce profil"}
                   </button>
                 )}
-              </>
-            )}
+              {!viewer && (
+                <div className="rounded-2xl bg-brand-soft p-5">
+                  <p className="font-semibold text-brand-ink">Créez votre compte gratuit pour écrire à {card.first}. Les montants et les coordonnées sont visibles par les membres validés.</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link href="/inscription" className="btn-primary">Créer mon profil</Link>
+                    <Link href={`/connexion?next=${encodeURIComponent(`/?p=${card.id}`)}`} className="btn-outline">Se connecter</Link>
+                  </div>
+                </div>
+              )}
+            </>
           </div>
 
           {viewer && !isSelf && (
