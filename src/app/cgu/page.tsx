@@ -32,7 +32,7 @@ export default async function CguPage() {
       <h2>3. Inscription et profil</h2>
       <ul>
         <li>L&apos;inscription est gratuite et réservée aux personnes majeures.</li>
-        <li>Chaque membre fournit des informations exactes et à jour, et une photo portrait récente sur laquelle son visage est net.</li>
+        <li>Chaque membre fournit des informations exactes et à jour, et une vraie photo de lui-même, obligatoire, récente et sur laquelle son visage est net (ni logo, ni dessin, ni photo d&apos;une autre personne). Cette photo est toujours affichée sur son profil.</li>
         <li>Chaque profil est vérifié avant d&apos;être publié. Un profil peut être refusé, masqué ou suspendu s&apos;il ne respecte pas ces conditions.</li>
         <li>Vous êtes responsable de la confidentialité de votre mot de passe et de toute activité réalisée depuis votre compte.</li>
       </ul>

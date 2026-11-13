@@ -8,7 +8,7 @@ function toneFor(id: string) {
   return TONES[h % TONES.length];
 }
 
-/** Reflet neutre quand il n'y a pas de photo (ou qu'elle est masquée) : silhouette d'homme ou de femme. */
+/** Reflet neutre quand la photo manque encore (anciens profils) : silhouette d'homme ou de femme. */
 function Silhouette({ gender }: { gender: "homme" | "femme" | null }) {
   const fill = { fill: "#fff", fillOpacity: 0.9 };
   if (gender === "femme") {

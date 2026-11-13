@@ -120,10 +120,10 @@ async function PendingProfiles() {
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <p className="font-bold">{displayName(p.first_name, p.last_name)} <span className="font-normal text-muted">· {p.role === "recruiter" ? "Recruteur" : "Candidat"}</span></p>
             <p className="text-sm text-muted">{p.candidate_details?.job_title ?? p.recruiter_details?.company_name ?? ""} {p.city ? `· ${p.city}` : ""}</p>
-            {p.photo_hidden && <p className="text-xs font-bold text-brand-ink">Photo masquée au public (silhouette {p.gender ?? "neutre"})</p>}
+            {!p.photo_path && <p className="text-xs font-bold text-danger">Pas de photo : refusez ce profil (photo obligatoire).</p>}
             {p.headline && <p className="text-sm">{p.headline}</p>}
             <div className="mt-auto flex flex-wrap gap-2">
-              <form action={approveProfile.bind(null, p.id)}><button type="submit" className="btn-primary min-h-10">Valider</button></form>
+              <form action={approveProfile.bind(null, p.id)}><button type="submit" disabled={!p.photo_path} className="btn-primary min-h-10 disabled:opacity-50">Valider</button></form>
               <form action={rejectProfile.bind(null, p.id)} className="flex flex-1 gap-2">
                 <label htmlFor={`r-${p.id}`} className="sr-only">Motif du refus</label>
                 <input id={`r-${p.id}`} name="reason" placeholder="Motif (facultatif)" className="field min-h-10 flex-1 text-sm" />

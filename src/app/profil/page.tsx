@@ -54,6 +54,12 @@ export default async function ProfilPage({ searchParams }: { searchParams: Promi
         {!viewer.isPro && <Link href="/pro" className="btn-outline">Passer en Pro</Link>}
       </div>
 
+      {showForm && !p.photo_path && (
+        <p role="alert" className="mt-6 rounded-xl bg-danger-soft p-4 text-sm font-semibold text-danger">
+          Ajoutez votre photo : elle est obligatoire (une vraie photo de vous, visage net). Elle sera toujours affichée sur votre profil.
+        </p>
+      )}
+
       {showForm && (
         <p className={`mt-6 rounded-xl p-4 text-sm font-semibold ${status.tone}`}>
           {status.text}
