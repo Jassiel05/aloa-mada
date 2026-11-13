@@ -5,6 +5,7 @@ import { getViewer } from "@/lib/viewer";
 import { CITIES, CONTRACTS, contractLabel, formatRate, workModeLabel } from "@/lib/labels";
 import type { Offer } from "@/lib/types";
 import LockedInfo from "@/components/LockedInfo";
+import { rateText } from "@/lib/privacy";
 
 export const metadata: Metadata = {
   title: "Offres d'emploi et missions à Madagascar",
@@ -101,7 +102,7 @@ export default async function OffresPage({ searchParams }: { searchParams: Promi
                   <p className="mt-1.5 text-sm text-muted">
                     {[o.city ?? "Lieu à préciser", o.work_mode ? workModeLabel(o.work_mode) : null].filter(Boolean).join(", ")}
                   </p>
-                  <p className="mt-auto pt-5 font-bold">{viewer?.isValidated ? formatRate(o.rate_amount, o.rate_currency, o.rate_unit) : <LockedInfo loggedIn={!!viewer} className="text-sm font-semibold">Rémunération réservée aux membres validés</LockedInfo>}</p>
+                  <p className="mt-auto pt-5 font-bold">{(() => { const r = rateText(o.rate_amount, o.rate_currency, o.rate_unit, !!viewer?.isValidated); return r.hidden ? <LockedInfo loggedIn={!!viewer} className="text-sm font-semibold">Montant réservé aux membres validés</LockedInfo> : r.text; })()}</p>
                 </Link>
               </li>
             ))}

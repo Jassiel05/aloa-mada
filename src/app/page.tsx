@@ -72,7 +72,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   }
 
   let contacts = new Map<string, Contacts>();
-  if (viewer?.can.seeContacts && rows.length) {
+  if (viewer?.can.seeContacts && viewer.isValidated && rows.length) {
     const { data: c } = await supabase.from("profile_contacts").select("*").in("profile_id", rows.map((r) => r.id));
     contacts = new Map((c ?? []).map((x: Contacts) => [x.profile_id, x]));
   }
@@ -184,7 +184,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <Gallery
             cards={cards}
             initialId={sp.p ?? null}
-            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, seeContacts: viewer.can.seeContacts, favorites } : null}
+            viewer={viewer ? { id: viewer.id, canStart: viewer.can.startConversation, seeContacts: viewer.can.seeContacts, validated: viewer.isValidated, favorites } : null}
           />
         )}
 

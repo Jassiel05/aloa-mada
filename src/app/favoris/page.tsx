@@ -6,6 +6,7 @@ import { contractLabel, displayName, formatRate, publicPhoto } from "@/lib/label
 import type { Offer, Profile } from "@/lib/types";
 import Portrait from "@/components/Portrait";
 import FavoriteButton from "@/components/FavoriteButton";
+import { rateText } from "@/lib/privacy";
 
 export const metadata: Metadata = { title: "Mes favoris" };
 
@@ -64,7 +65,7 @@ export default async function FavorisPage() {
               <Link href={`/offres/${o!.id}`} className="text-ink no-underline">
                 <p className="inline-flex rounded-md bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand-ink">{contractLabel(o!.contract_type)}</p>
                 <p className="mt-1 font-display text-xl font-bold">{o!.title}</p>
-                <p className="mt-2 text-sm font-semibold">{viewer.isValidated ? formatRate(o!.rate_amount, o!.rate_currency, o!.rate_unit) : "Réservée aux membres validés"}</p>
+                <p className="mt-2 text-sm font-semibold">{(() => { const r = rateText(o!.rate_amount, o!.rate_currency, o!.rate_unit, viewer.isValidated); return r.hidden ? "Montant réservé aux membres validés" : r.text; })()}</p>
               </Link>
               <FavoriteButton offerId={o!.id} initial />
             </li>

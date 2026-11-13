@@ -6,6 +6,7 @@ import { contractLabel, displayName, formatRate, workModeLabel } from "@/lib/lab
 import type { Offer, Profile } from "@/lib/types";
 import ApplyBox from "./ApplyBox";
 import FavoriteButton from "@/components/FavoriteButton";
+import { maskContacts, rateText } from "@/lib/privacy";
 
 export default async function OfferPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -32,8 +33,9 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
   }
   const expired = offer.status !== "open" || new Date(offer.expires_at) < new Date();
 
+  const rate = rateText(offer.rate_amount, offer.rate_currency, offer.rate_unit, !!viewer?.isValidated);
   const facts: [string, React.ReactNode][] = [
-    ["Rémunération", viewer?.isValidated ? formatRate(offer.rate_amount, offer.rate_currency, offer.rate_unit) : "Réservée aux membres validés"],
+    ["Rémunération", rate.hidden ? "Montant réservé aux membres validés" : rate.text],
     ["Contrat", contractLabel(offer.contract_type)],
     ...(offer.city ? ([["Lieu", offer.city]] as [string, string][]) : []),
     ...(offer.work_mode ? ([["Organisation", workModeLabel(offer.work_mode)]] as [string, string][]) : []),
@@ -58,7 +60,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
               {" "}le {new Date(offer.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
             </p>
           )}
-          <div className="card mt-8 p-6 text-[17px] leading-relaxed whitespace-pre-line sm:p-8">{offer.description}</div>
+          <div className="card mt-8 p-6 text-[17px] leading-relaxed whitespace-pre-line sm:p-8">{viewer?.isValidated ? offer.description : maskContacts(offer.description)}</div>
         </article>
 
         <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">

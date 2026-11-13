@@ -34,9 +34,9 @@ export default async function ConfidentialitePage() {
 
       <h2>Qui voit quoi</h2>
       <ul>
-        <li>Tout le monde : portrait, prénom et initiale du nom, métier, ville, disponibilité et prétentions.</li>
-        <li>Membres connectés : la fiche complète, sauf les coordonnées.</li>
-        <li>Recruteurs et candidats Pro : en plus, l&apos;email, le téléphone et le CV. Les candidats Simple et les visiteurs ne les voient jamais.</li>
+        <li>Tout le monde : la fiche (portrait, prénom et initiale du nom, métier, ville, disponibilité, compétences, expérience, langues, contrats, présentation). Les montants (prétentions, rémunérations), l&apos;email, le téléphone et le WhatsApp sont cachés ; « À négocier » reste visible.</li>
+        <li>Membres connectés dont le profil est validé : en plus, les montants.</li>
+        <li>Recruteurs et candidats Pro validés : en plus, l&apos;email, le téléphone, le WhatsApp et le CV. Les candidats Simple et les visiteurs ne les voient jamais.</li>
         <li>Les messages sont réservés aux deux personnes de la conversation. L&apos;équipe peut les consulter uniquement pour traiter un signalement.</li>
       </ul>
 
