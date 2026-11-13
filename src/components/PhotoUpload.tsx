@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { photoUrl } from "@/lib/labels";
-import { compressPortrait } from "@/lib/compress";
+import { compressPortrait, PhotoError } from "@/lib/compress";
 
 export default function PhotoUpload({ userId, value, onChange }: { userId: string; value: string | null; onChange: (path: string) => void }) {
   const input = useRef<HTMLInputElement>(null);
@@ -29,8 +29,8 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
       if (upErr) throw upErr;
       if (value) await supabase.storage.from("avatars").remove([value]);
       onChange(path);
-    } catch {
-      setError("L'envoi a échoué. Réessayez avec une autre photo.");
+    } catch (e) {
+      setError(e instanceof PhotoError ? e.message : "L'envoi a échoué. Réessayez avec une autre photo.");
     } finally {
       setBusy(false);
     }
@@ -53,13 +53,15 @@ export default function PhotoUpload({ userId, value, onChange }: { userId: strin
         )}
       </button>
       <div className="text-sm">
-        <p className="font-bold">Une photo qui donne confiance</p>
+        <p className="font-bold">Photo obligatoire : une vraie photo de vous</p>
         <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-muted">
-          <li>Fond uni, lumière du jour, visage net</li>
+          <li>Vous seul(e), visage net et visible, prise récemment</li>
+          <li>Fond uni, lumière du jour</li>
           <li>Haut du corps, tenue de travail ou habillée</li>
+          <li>Ni logo, ni dessin, ni photo d&apos;une autre personne</li>
           <li>Pas de lunettes de soleil, de groupe ni de filtre</li>
         </ul>
-        <p className="mt-2 text-muted">Elle est recadrée automatiquement au format portrait et vérifiée avant publication.</p>
+        <p className="mt-2 text-muted">Elle est recadrée automatiquement au format portrait, toujours affichée sur votre profil, et vérifiée par notre équipe : un profil sans vraie photo est refusé.</p>
         <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
         <button type="button" onClick={() => input.current?.click()} disabled={busy} className="btn-outline mt-3">
           {busy ? "Envoi…" : url ? "Changer la photo" : "Choisir une photo"}

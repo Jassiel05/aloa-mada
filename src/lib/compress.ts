@@ -36,9 +36,18 @@ async function loadBitmap(file: Blob) {
   }
 }
 
+export class PhotoError extends Error {}
+
+/** Une vraie photo de visage fait au moins ça : en dessous, c'est une icône, un logo ou une miniature. */
+const PHOTO_MIN_SIDE = 300;
+
 /** Photo portrait : recadrée au centre en 4:5 (720×900), moins de 120 Ko. */
 export async function compressPortrait(file: File): Promise<Blob> {
   const bitmap = await loadBitmap(file);
+  if (Math.min(bitmap.width, bitmap.height) < PHOTO_MIN_SIDE) {
+    bitmap.close();
+    throw new PhotoError(`Photo trop petite (${PHOTO_MIN_SIDE} px minimum de côté). Choisissez une vraie photo de vous, nette.`);
+  }
   const W = 720;
   const H = 900;
   const ratio = W / H;
